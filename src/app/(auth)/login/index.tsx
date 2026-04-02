@@ -81,10 +81,7 @@ export default function LoginScreen() {
         <View style={styles.inputWrapper}>
           <View style={[styles.row, getErrorStyle(error.email)]}>
             <TextInput
-              style={[
-                styles.input,
-                getErrorStyle(error.email),
-              ]}
+              style={[styles.input, getErrorStyle(error.email)]}
               placeholder="johndoe@email.com"
               value={email}
               onChangeText={setEmail}

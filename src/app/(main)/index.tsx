@@ -25,7 +25,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const { width, height } = Dimensions.get("window");
 
 export default function HomeScreen() {
-  const { from, to, date, passengers, tripType, setFrom, setTo, setFlights } = useSearch();
+  const {
+    from,
+    to,
+    date,
+    passengers,
+    tripType,
+    deviceId,
+    setFrom,
+    setTo,
+    setFlights,
+  } = useSearch();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -42,10 +52,11 @@ export default function HomeScreen() {
         adults: passengers.adults,
         children: passengers.children,
         infants: passengers.infants,
+        deviceId,
       });
       if (response.success && response.data) {
-        setFlights(response.data)
-        router.push("/flights")
+        setFlights(response.data);
+        router.push("/flights");
       }
     } catch {
     } finally {
@@ -105,9 +116,7 @@ export default function HomeScreen() {
 
         <View style={commonStyles.dashLine} />
         <View style={styles.pastTrips}>
-          <ThemedText style={styles.pastTripsBadgeText}>
-            Past Trips
-          </ThemedText>
+          <ThemedText style={styles.pastTripsBadgeText}>Past Trips</ThemedText>
         </View>
 
         <View style={styles.pastTripsContainer}>

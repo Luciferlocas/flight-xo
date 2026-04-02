@@ -5,37 +5,37 @@
  * @returns The constructed URL string.
  */
 export function urlBuilder<TQuery extends Record<string, any>>(
-    baseUrl: string,
-    query: TQuery
+  baseUrl: string,
+  query: TQuery
 ): string {
-    const searchParams = new URLSearchParams();
+  const searchParams = new URLSearchParams();
 
-    for (const key in query) {
-        if (Object.prototype.hasOwnProperty.call(query, key)) {
-            const value = query[key];
+  for (const key in query) {
+    if (Object.prototype.hasOwnProperty.call(query, key)) {
+      const value = query[key];
 
-            if (Array.isArray(value)) {
-                const filteredArray = value.filter(
-                    (item: string) =>
-                        item !== null &&
-                        item !== undefined &&
-                        !(typeof item === "string" && item.trim() === "")
-                );
-                if (filteredArray.length > 0) {
-                    searchParams.append(key, filteredArray.join(","));
-                }
-            } else {
-                if (
-                    value !== null &&
-                    value !== undefined &&
-                    !(typeof value === "string" && value.trim() === "")
-                ) {
-                    searchParams.append(key, String(value));
-                }
-            }
+      if (Array.isArray(value)) {
+        const filteredArray = value.filter(
+          (item: string) =>
+            item !== null &&
+            item !== undefined &&
+            !(typeof item === "string" && item.trim() === "")
+        );
+        if (filteredArray.length > 0) {
+          searchParams.append(key, filteredArray.join(","));
         }
+      } else {
+        if (
+          value !== null &&
+          value !== undefined &&
+          !(typeof value === "string" && value.trim() === "")
+        ) {
+          searchParams.append(key, String(value));
+        }
+      }
     }
+  }
 
-    const queryString = searchParams.toString();
-    return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+  const queryString = searchParams.toString();
+  return queryString ? `${baseUrl}?${queryString}` : baseUrl;
 }

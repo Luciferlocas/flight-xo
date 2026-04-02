@@ -18,5 +18,4 @@ export const getTime = (date: Date) => {
     hour: "2-digit",
     minute: "2-digit",
   });
-}
-
+};

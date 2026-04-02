@@ -1,7 +1,9 @@
 import { create } from "zustand";
 import { FlightResponse } from "@/schema/search/index.types";
+import { getDeviceId } from "@/utils/device";
 
 interface SearchState {
+  deviceId: string;
   tripType: "roundTrip" | "oneWay";
   from: {
     city: string;
@@ -23,6 +25,7 @@ interface SearchState {
     infants: number;
   };
   flights: FlightResponse | null;
+  setDeviceId: (deviceId: string) => void;
   setTripType: (tripType: "roundTrip" | "oneWay") => void;
   setFrom: (from: { city: string; country: string; iata: string }) => void;
   setTo: (to: { city: string; country: string; iata: string }) => void;
@@ -36,6 +39,7 @@ interface SearchState {
 }
 
 export const useSearchStore = create<SearchState>((set) => ({
+  deviceId: "",
   tripType: "oneWay",
   from: {
     city: "",
@@ -57,6 +61,7 @@ export const useSearchStore = create<SearchState>((set) => ({
     infants: 0,
   },
   flights: null,
+  setDeviceId: (deviceId: string) => set({ deviceId }),
   setTripType: (tripType: "roundTrip" | "oneWay") => set({ tripType }),
   setFrom: (from: { city: string; country: string; iata: string }) =>
     set({ from }),
@@ -78,6 +83,8 @@ export const useSearch = () => {
     date,
     passengers,
     flights,
+    deviceId,
+    setDeviceId,
     setTripType,
     setFrom,
     setTo,
@@ -86,6 +93,11 @@ export const useSearch = () => {
     setFlights,
   } = useSearchStore();
 
+  const initializeDeviceId = async () => {
+    const deviceId = await getDeviceId();
+    setDeviceId(deviceId);
+  };
+
   return {
     tripType,
     from,
@@ -93,11 +105,14 @@ export const useSearch = () => {
     date,
     passengers,
     flights,
+    deviceId,
+    setDeviceId,
     setTripType,
     setFrom,
     setTo,
     setDate,
     setPassengers,
     setFlights,
+    initializeDeviceId,
   };
 };

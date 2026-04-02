@@ -9,12 +9,15 @@ import { StatusBar, useColorScheme } from "react-native";
 
 import { getToken } from "@/utils/auth";
 import { Stack } from "expo-router";
+import { useSearch } from "@/store";
 
 export default function RootLayout() {
+  const { initializeDeviceId } = useSearch();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const colorScheme = useColorScheme();
 
   useEffect(() => {
+    initializeDeviceId();
     const checkAuth = async () => {
       const token = await getToken();
       setIsLoggedIn(!!token);

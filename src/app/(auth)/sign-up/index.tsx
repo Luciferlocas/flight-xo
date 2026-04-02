@@ -223,7 +223,7 @@ export default function SignUpScreen() {
                   style={[
                     styles.verifyButton,
                     otp.disabled &&
-                    !loading.sendOtp && { backgroundColor: "#ccc" },
+                      !loading.sendOtp && { backgroundColor: "#ccc" },
                   ]}
                 >
                   {loading.sendOtp ? (

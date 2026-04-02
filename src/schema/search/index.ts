@@ -83,6 +83,7 @@ export const FlightSearchRequestSchema = z.object({
   adults: z.number(),
   children: z.number(),
   infants: z.number(),
+  deviceId: z.string(),
 });
 
 const DiscountSchema = z.object({
@@ -188,41 +189,50 @@ export const FlightResponseSchema = z.object({
   timestamp: z.string(),
   length: z.number(),
   flights: z.array(FlightItemSchema),
-  meta: z.object({
-    price: z.object({ min: z.number(), max: z.number() }),
-    duration: z.object({ min: z.string(), max: z.string() }),
-    stops: z.object({ min: z.number(), max: z.number() }),
-    layover: z.object({ min: z.string(), max: z.string() }),
-    airlines: z.array(z.string()),
-    airlineNames: z.record(z.string(), z.string()),
-    airports: z.object({
-      origin: z.array(z.string()),
-      destination: z.array(z.string()),
-    }),
-    airportNames: z.record(z.string(), z.string()),
-    departure: z.object({
-      timezone: z.string(),
-      min_datetime: z.string(),
-      max_datetime: z.string(),
-      min_timestamp: z.number(),
-      max_timestamp: z.number(),
-    }),
-    arrival: z.object({
-      timezone: z.string(),
-      min_datetime: z.string(),
-      max_datetime: z.string(),
-      min_timestamp: z.number(),
-      max_timestamp: z.number(),
-    }),
-    airline_filter: z.record(z.string(), z.object({
-      cnt: z.number(),
-      stp: z.number()
-    })),
-    provider_order: z.array(z.string()),
-    card_info: z.array(z.object({
-      id: z.number(),
-      text: z.string(),
-      flights_length: z.number()
-    })).optional()
-  }).passthrough(),
+  meta: z
+    .object({
+      price: z.object({ min: z.number(), max: z.number() }),
+      duration: z.object({ min: z.string(), max: z.string() }),
+      stops: z.object({ min: z.number(), max: z.number() }),
+      layover: z.object({ min: z.string(), max: z.string() }),
+      airlines: z.array(z.string()),
+      airlineNames: z.record(z.string(), z.string()),
+      airports: z.object({
+        origin: z.array(z.string()),
+        destination: z.array(z.string()),
+      }),
+      airportNames: z.record(z.string(), z.string()),
+      departure: z.object({
+        timezone: z.string(),
+        min_datetime: z.string(),
+        max_datetime: z.string(),
+        min_timestamp: z.number(),
+        max_timestamp: z.number(),
+      }),
+      arrival: z.object({
+        timezone: z.string(),
+        min_datetime: z.string(),
+        max_datetime: z.string(),
+        min_timestamp: z.number(),
+        max_timestamp: z.number(),
+      }),
+      airline_filter: z.record(
+        z.string(),
+        z.object({
+          cnt: z.number(),
+          stp: z.number(),
+        })
+      ),
+      provider_order: z.array(z.string()),
+      card_info: z
+        .array(
+          z.object({
+            id: z.number(),
+            text: z.string(),
+            flights_length: z.number(),
+          })
+        )
+        .optional(),
+    })
+    .passthrough(),
 });
