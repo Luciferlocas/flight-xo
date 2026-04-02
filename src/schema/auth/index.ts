@@ -23,4 +23,5 @@ export const LoginRequestSchema = z.object({
 
 export const LoginResponseSchema = z.object({
   token: z.string(),
+  message: z.string(),
 });

@@ -24,7 +24,9 @@ export async function parseResponse<T>(
 
   try {
     data = await response.json();
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+  }
 
   return {
     success: true,

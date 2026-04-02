@@ -1,7 +1,8 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { Spinner } from "@/components/ui/spinner";
 import { AuthService } from "@/service";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { CircleCheck, Plane } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
@@ -13,11 +14,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Spinner } from "@/components/ui/spinner";
 
 const { width, height } = Dimensions.get("window");
 
 export default function SignUpScreen() {
+  const router = useRouter();
   const [otp, setOtp] = useState({
     sent: false,
     value: "",
@@ -63,7 +64,11 @@ export default function SignUpScreen() {
 
   const handleSendOtp = async () => {
     if (!user.mobile) {
-      setError(prev => ({ ...prev, mobile: true, message: "Mobile number required" }));
+      setError((prev) => ({
+        ...prev,
+        mobile: true,
+        message: "Mobile number required",
+      }));
       return;
     }
 
@@ -71,13 +76,17 @@ export default function SignUpScreen() {
     try {
       await AuthService.sendOTP({ mobile: user.mobile });
       setOtp((prev) => ({ ...prev, sent: true, disabled: true }));
-      setError(prev => ({ ...prev, mobile: false, message: "" }));
+      setError((prev) => ({ ...prev, mobile: false, message: "" }));
 
       setTimeout(() => {
         setOtp((prev) => ({ ...prev, disabled: false }));
       }, 60000);
     } catch (err) {
-      setError(prev => ({ ...prev, message: "Failed to send OTP. Try again." }));
+      console.error(err);
+      setError((prev) => ({
+        ...prev,
+        message: "Failed to send OTP. Try again.",
+      }));
     } finally {
       setLoading((prev) => ({ ...prev, sendOtp: false }));
     }
@@ -86,30 +95,30 @@ export default function SignUpScreen() {
   useEffect(() => {
     if (otp.value.length === 6 && !otp.verified) {
       const verify = async () => {
-        setOtp(prev => ({ ...prev, isVerifying: true }));
-        setLoading(prev => ({ ...prev, verifyOtp: true }));
+        setOtp((prev) => ({ ...prev, isVerifying: true }));
+        setLoading((prev) => ({ ...prev, verifyOtp: true }));
 
         try {
           const res = await AuthService.verifyOTP({
             mobile: user.mobile,
             otp: otp.value,
           });
-          console.log("OTP Verified", res);
-          if (res) setOtp(prev => ({ ...prev, verified: true }));
+          if (res.success) setOtp((prev) => ({ ...prev, verified: true }));
         } catch (err) {
-          setError(prev => ({ ...prev, message: "Invalid OTP" }));
-          setOtp(prev => ({ ...prev, value: "" }));
+          console.error(err);
+          setError((prev) => ({ ...prev, message: "Invalid OTP" }));
+          setOtp((prev) => ({ ...prev, value: "" }));
         } finally {
-          setOtp(prev => ({ ...prev, isVerifying: false }));
-          setLoading(prev => ({ ...prev, verifyOtp: false }));
+          setOtp((prev) => ({ ...prev, isVerifying: false }));
+          setLoading((prev) => ({ ...prev, verifyOtp: false }));
         }
       };
       verify();
     }
-  }, [otp.value]);
+  }, [otp.value, user.mobile, otp.verified]);
 
   const handleSignUp = async () => {
-    const hasEmptyFields = Object.values(user).some(val => val === "");
+    const hasEmptyFields = Object.values(user).some((val) => val === "");
     if (hasEmptyFields) {
       setError({
         name: user.name === "",
@@ -121,7 +130,7 @@ export default function SignUpScreen() {
       });
       return;
     }
-    setLoading(prev => ({ ...prev, signUp: true }));
+    setLoading((prev) => ({ ...prev, signUp: true }));
     try {
       const res = await AuthService.signup({
         fullName: user.name,
@@ -129,11 +138,17 @@ export default function SignUpScreen() {
         email: user.email,
         password: user.password,
       });
-      console.log(res)
+      if (res.success) {
+        router.replace("/");
+      }
     } catch (error) {
-      setError(prev => ({ ...prev, message: "Failed to sign up. Try again." }));
+      console.error(error);
+      setError((prev) => ({
+        ...prev,
+        message: "Failed to sign up. Try again.",
+      }));
     } finally {
-      setLoading(prev => ({ ...prev, signUp: false }));
+      setLoading((prev) => ({ ...prev, signUp: false }));
     }
   };
 
@@ -169,7 +184,11 @@ export default function SignUpScreen() {
 
           <View style={styles.mobileRow}>
             <TextInput
-              style={[styles.mobileInput, styles.input, getErrorStyle(error.mobile)]}
+              style={[
+                styles.mobileInput,
+                styles.input,
+                getErrorStyle(error.mobile),
+              ]}
               placeholder="(+91) 9876543210"
               keyboardType="number-pad"
               value={user.mobile}
@@ -201,7 +220,11 @@ export default function SignUpScreen() {
                 <TouchableOpacity
                   onPress={handleSendOtp}
                   disabled={loading.sendOtp || otp.disabled}
-                  style={[styles.verifyButton, (otp.disabled && !loading.sendOtp) && { backgroundColor: '#ccc' }]}
+                  style={[
+                    styles.verifyButton,
+                    otp.disabled &&
+                    !loading.sendOtp && { backgroundColor: "#ccc" },
+                  ]}
                 >
                   {loading.sendOtp ? (
                     <Spinner color="black" />
@@ -217,7 +240,11 @@ export default function SignUpScreen() {
           <View style={styles.dashLine} />
 
           <TextInput
-            style={[styles.emailInput, styles.input, getErrorStyle(error.email)]}
+            style={[
+              styles.emailInput,
+              styles.input,
+              getErrorStyle(error.email),
+            ]}
             placeholder="johndoe@email.com"
             keyboardType="email-address"
             value={user.email}
@@ -227,7 +254,12 @@ export default function SignUpScreen() {
           <View style={styles.dashLine} />
 
           <View style={styles.passwordRow}>
-            <View style={[{ paddingHorizontal: 12, flex: 1 }, getErrorStyle(error.password)]}>
+            <View
+              style={[
+                { paddingHorizontal: 12, flex: 1 },
+                getErrorStyle(error.password),
+              ]}
+            >
               <TextInput
                 style={styles.input}
                 secureTextEntry
@@ -238,12 +270,19 @@ export default function SignUpScreen() {
               />
             </View>
             <View style={styles.dashLineVertical} />
-            <View style={[{ paddingHorizontal: 12, flex: 1 }, getErrorStyle(error.confirmPassword)]}>
+            <View
+              style={[
+                { paddingHorizontal: 12, flex: 1 },
+                getErrorStyle(error.confirmPassword),
+              ]}
+            >
               <TextInput
                 style={styles.input}
                 secureTextEntry
                 value={user.confirmPassword}
-                onChangeText={(text) => setUser({ ...user, confirmPassword: text })}
+                onChangeText={(text) =>
+                  setUser({ ...user, confirmPassword: text })
+                }
                 placeholder="confirm password"
                 placeholderTextColor="#aeaeaeff"
               />
@@ -285,14 +324,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAEAE2",
   },
   imageContainer: {
-    height: "35%",
+    height: "30%",
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
   },
   image: {
-    height: "80%",
+    height: "100%",
     width: "100%",
     resizeMode: "cover",
   },
@@ -409,7 +448,7 @@ const styles = StyleSheet.create({
   },
   signUpText: {
     position: "absolute",
-    top: 100,
+    top: 80,
     fontSize: 16,
     color: "#000",
   },

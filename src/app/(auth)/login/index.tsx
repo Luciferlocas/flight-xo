@@ -1,21 +1,20 @@
-import React from "react";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Spinner } from "@/components/ui/spinner";
+import { AuthService } from "@/service";
+import { saveToken } from "@/utils/auth";
+import { Link, useRouter } from "expo-router";
+import { Key, Plane, ScanFace } from "lucide-react-native";
+import React, { useState } from "react";
 import {
+  Dimensions,
+  Image,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
-  Dimensions,
-  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScanFace, Plane, Key } from "lucide-react-native";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Link, useRouter } from "expo-router";
-import { useState } from "react";
-import { AuthService } from "@/service";
-import { Spinner } from "@/components/ui/spinner";
-import { saveToken } from "@/utils/auth";
 
 const { width, height } = Dimensions.get("window");
 
@@ -45,6 +44,12 @@ export default function LoginScreen() {
       if (response.success && response.data?.token) {
         await saveToken(response.data.token);
         router.replace("/");
+      } else {
+        setError({
+          email: true,
+          password: true,
+          message: response.data?.message as string,
+        });
       }
     } catch (error) {
       console.error(error);
@@ -74,18 +79,23 @@ export default function LoginScreen() {
 
       <SafeAreaView style={styles.formContainer} edges={["bottom"]}>
         <View style={styles.inputWrapper}>
-          <TextInput
-            style={[styles.emailInput, styles.input, getErrorStyle(error.email)]}
-            placeholder="johndoe@email.com"
-            value={email}
-            onChangeText={setEmail}
-            placeholderTextColor="#aeaeaeff"
-          />
+          <View style={[styles.row, getErrorStyle(error.email)]}>
+            <TextInput
+              style={[
+                styles.input,
+                getErrorStyle(error.email),
+              ]}
+              placeholder="johndoe@email.com"
+              value={email}
+              onChangeText={setEmail}
+              placeholderTextColor="#aeaeaeff"
+            />
+          </View>
           <View style={styles.dashLine} />
 
-          <View style={styles.passwordRow}>
+          <View style={[styles.row, getErrorStyle(error.password)]}>
             <TextInput
-              style={[styles.input, { flex: 1 }, getErrorStyle(error.password)]}
+              style={[styles.input, { flex: 1 }]}
               secureTextEntry
               value={password}
               onChangeText={setPassword}
@@ -142,14 +152,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAEAE2",
   },
   imageContainer: {
-    height: "35%",
+    height: "30%",
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
   },
   image: {
-    height: "80%",
+    height: "100%",
     width: "100%",
     resizeMode: "cover",
   },
@@ -180,7 +190,7 @@ const styles = StyleSheet.create({
   emailInput: {
     paddingHorizontal: 12,
   },
-  passwordRow: {
+  row: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12,
@@ -247,7 +257,7 @@ const styles = StyleSheet.create({
   },
   signUpText: {
     position: "absolute",
-    top: 100,
+    top: 80,
     fontSize: 16,
     color: "#000",
   },
