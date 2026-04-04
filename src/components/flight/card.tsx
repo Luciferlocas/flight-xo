@@ -1,14 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
 import { FlightResponse } from "@/schema/search/index.types";
 import { getTime } from "@/utils/date";
-import {
-  getAircraftName,
-  getPaytmAirlineLogo,
-  getStopsText,
-} from "@/utils/flight";
+import { getPaytmAirlineLogo, getStopsText } from "@/utils/flight";
+import { useRouter } from "expo-router";
 import { PlaneTakeoff } from "lucide-react-native";
 import React from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 
 export const FlightCard = ({
   flight,
@@ -17,8 +14,15 @@ export const FlightCard = ({
   flight: FlightResponse["flights"][0];
   color: string;
 }) => {
+  const router = useRouter();
+
   return (
-    <View style={[styles.card, { backgroundColor: color }]}>
+    <Pressable
+      onPress={() => {
+        router.push(`/flights/${flight.flightid}`);
+      }}
+      style={[styles.card, { backgroundColor: color }]}
+    >
       <View style={styles.row}>
         <View style={styles.airlineInfo}>
           <View style={styles.imageContainer}>
@@ -70,7 +74,7 @@ export const FlightCard = ({
           </ThemedText>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

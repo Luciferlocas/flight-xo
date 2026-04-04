@@ -6,7 +6,6 @@ import { getShortDate } from "@/utils/date";
 import { Link } from "expo-router";
 import { ArrowLeft, Filter } from "lucide-react-native";
 import { Dimensions, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
 
@@ -14,7 +13,7 @@ export default function FlightsScreen() {
   const { flights, from, to, date } = useSearch();
 
   return (
-    <SafeAreaView style={[styles.container, { width, height }]}>
+    <View style={[styles.container, { width, height }]}>
       <View style={styles.header}>
         <Link href="/" style={styles.icon}>
           <ArrowLeft size={24} color="#000" />
@@ -35,7 +34,7 @@ export default function FlightsScreen() {
       <FlightFilters />
       <View style={commonStyles.dashLine} />
       <FlightList flights={flights?.flights || []} />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -54,12 +53,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "900",
     color: "#000",
+    textAlign: "center",
   },
   subTitle: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "#000",
     textAlign: "center",
   },

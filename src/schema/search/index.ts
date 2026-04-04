@@ -145,6 +145,7 @@ const HopSchema = z.object({
   duration: z.string(),
   class: z.string(),
   additional_info: z.record(z.string(), z.any()),
+  layover: z.string().optional(),
   aircraftType: z.string(),
   serviceType: z.string(),
   aircraftTypeSuffix: z.string(),
@@ -235,4 +236,49 @@ export const FlightResponseSchema = z.object({
         .optional(),
     })
     .passthrough(),
+  requestid: z.string(),
+});
+
+export const FlightFareRequestSchema = z.object({
+  id: z.string(),
+  requestId: z.string(),
+});
+
+const ServiceEnum = z.enum([
+  "CHECKIN_BAGGAGE",
+  "HAND_BAGGAGE",
+  "SEAT",
+  "MEAL",
+  "MODIFICATION",
+  "CANCELLATION",
+]);
+
+export const FlightFareSchema = z.object({
+  totalbase: z.number(),
+  totaltax: z.number(),
+  price: z.number(),
+  fare_id: z.number(),
+  fare_heading: z.string(),
+  fare_sub_heading: z.string(),
+  fare_name: z.string(),
+  display_price: z.number(),
+  price_id: z.string(),
+  flight_id: z.string(),
+  cabin_class: z.string().length(1),
+  available_services: z.array(ServiceEnum),
+});
+
+export const FareServicesSchema = z.object({
+  service_id: ServiceEnum,
+  row_display_text: z.string(),
+  available_col_display_text: z.string(),
+  available_col_display_text_by_fare_product: z.record(z.string(), z.string()),
+  display_image_by_fare_product: z.record(z.string(), z.boolean()),
+  unavailable_col_display_text: z.string(),
+  fare_service_icon: z.string(),
+});
+
+export const FlightFareResponseSchema = z.object({
+  fares: z.array(FlightFareSchema),
+  fare_services: z.array(FareServicesSchema),
 });

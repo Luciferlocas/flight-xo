@@ -6,6 +6,8 @@ import {
   AirportResponse,
   FlightSearchRequest,
   FlightResponse,
+  FlightFareRequest,
+  FlightFareResponse,
 } from "@/schema/search/index.types";
 import { urlBuilder } from "@/utils/url-builder";
 
@@ -34,5 +36,14 @@ export default class FlightController {
     const url = urlBuilder("/api/flight/get-flights", request);
     const response = await this.apiClient.get(url, headers);
     return await parseResponse<FlightResponse>(response);
+  }
+
+  async getFlightFares(
+    request: FlightFareRequest,
+    headers?: Record<string, string>
+  ): Promise<ClientResponse<FlightFareResponse>> {
+    const url = urlBuilder("/api/flight/get-flight-fares", request);
+    const response = await this.apiClient.get(url, headers);
+    return await parseResponse<FlightFareResponse>(response);
   }
 }

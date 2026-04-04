@@ -1,3 +1,13 @@
+import {
+  BriefcaseBusiness,
+  CalendarClock,
+  CalendarX,
+  CopyPlus,
+  Luggage,
+  RockingChair,
+  Utensils,
+} from "lucide-react-native";
+
 export interface FlightHop {
   aircraftType: string;
   aircraftTypeDisplayName?: string;
@@ -47,4 +57,25 @@ export const getStopsText = (hops: FlightHop[]): string => {
     return "Non Stop";
   }
   return `${stops} Stop${stops > 1 ? "s" : ""}`;
+};
+
+export const getFareServiceIcon = (icon: string) => {
+  switch (icon) {
+    case "Seat":
+      return RockingChair;
+    case "Meal":
+      return Utensils;
+    case "Change Fee":
+      return CalendarClock;
+    case "Cancellation Fee":
+      return CalendarX;
+    case "Check-in baggage":
+      return Luggage;
+    case "Hand baggage":
+      return BriefcaseBusiness;
+    case "Add Ons":
+      return CopyPlus;
+    default:
+      return CopyPlus;
+  }
 };
