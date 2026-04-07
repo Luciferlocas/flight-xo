@@ -3,6 +3,7 @@ import { ThemedText } from "@/components/themed-text";
 import { commonStyles } from "@/constants/style";
 import { useSearch } from "@/store/search";
 import { getShortDate } from "@/utils/date";
+import { getFilteredFlights } from "@/utils/filter";
 import { Link } from "expo-router";
 import { ArrowLeft, Filter } from "lucide-react-native";
 import { Dimensions, StyleSheet, View } from "react-native";
@@ -10,7 +11,8 @@ import { Dimensions, StyleSheet, View } from "react-native";
 const { width, height } = Dimensions.get("window");
 
 export default function FlightsScreen() {
-  const { flights, from, to, date } = useSearch();
+  const { flights, from, to, date, filter } = useSearch();
+  const filteredFlights = getFilteredFlights(flights?.flights || [], filter);
 
   return (
     <View style={[styles.container, { width, height }]}>
@@ -33,7 +35,7 @@ export default function FlightsScreen() {
       <View style={commonStyles.dashLine} />
       <FlightFilters />
       <View style={commonStyles.dashLine} />
-      <FlightList flights={flights?.flights || []} />
+      <FlightList flights={filteredFlights} />
     </View>
   );
 }

@@ -1,7 +1,7 @@
 import { commonStyles } from "@/constants/style";
 import { FlightResponse } from "@/schema/search/index.types";
-import { getDayDate, getTime } from "@/utils/date";
-import { getAircraftName, getPaytmAirlineLogo } from "@/utils/flight";
+import { getDayDate } from "@/utils/date";
+import { getAircraftName, getAirlineLogo } from "@/utils/flight";
 import { PlaneTakeoff } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, View, Image } from "react-native";
@@ -24,7 +24,7 @@ export const FlightDetailsCard = ({
                 <View style={styles.airlineInfo}>
                   <View style={styles.imageContainer}>
                     <Image
-                      source={{ uri: getPaytmAirlineLogo(item.airlineCode) }}
+                      source={{ uri: getAirlineLogo(item.airlineCode) }}
                       style={styles.image}
                     />
                   </View>
@@ -42,7 +42,7 @@ export const FlightDetailsCard = ({
               <View style={styles.pathContainer}>
                 <View style={styles.cityBlock}>
                   <ThemedText style={styles.day}>
-                    {getTime(new Date(item.departureTime), false)}
+                    {item.departureTimeAirport}
                   </ThemedText>
                   <ThemedText style={styles.timeText}>
                     {getDayDate(new Date(item.departureTime))}
@@ -66,7 +66,7 @@ export const FlightDetailsCard = ({
 
                 <View style={[styles.cityBlock, { alignItems: "flex-end" }]}>
                   <ThemedText style={styles.day}>
-                    {getTime(new Date(item.arrivalTime), false)}
+                    {item.arrivalTimeAirport}
                   </ThemedText>
                   <ThemedText style={styles.timeText}>
                     {getDayDate(new Date(item.arrivalTime))}

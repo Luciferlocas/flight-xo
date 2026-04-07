@@ -20,11 +20,3 @@ export const getDayDate = (date: Date) => {
     day: "numeric",
   });
 };
-
-export const getTime = (date: Date, showPm: boolean = true) => {
-  return date.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: showPm,
-  });
-};

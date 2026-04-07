@@ -27,11 +27,10 @@ interface SearchState {
   flightClass: string;
   flights: FlightResponse | null;
   filter: {
+    sortBy: string;
     stops: string;
-    price: string;
     departureTime: string;
     arrivalTime: string;
-    duration: string;
     airlines: string[];
     flightClass: string;
   };
@@ -48,11 +47,10 @@ interface SearchState {
   setFlightClass: (flightClass: string) => void;
   setFlights: (flights: FlightResponse) => void;
   setFilter: (filter: {
+    sortBy: string
     stops: string;
-    price: string;
     departureTime: string;
     arrivalTime: string;
-    duration: string;
     airlines: string[];
     flightClass: string;
   }) => void;
@@ -83,13 +81,12 @@ export const useSearchStore = create<SearchState>((set) => ({
   flightClass: "E",
   flights: null,
   filter: {
+    sortBy: "price",
     stops: "",
-    price: "",
     departureTime: "",
     arrivalTime: "",
-    duration: "",
     airlines: [],
-    flightClass: "",
+    flightClass: "E",
   },
   setDeviceId: (deviceId: string) => set({ deviceId }),
   setTripType: (tripType: "roundTrip" | "oneWay") => set({ tripType }),
@@ -105,11 +102,10 @@ export const useSearchStore = create<SearchState>((set) => ({
   setFlightClass: (flightClass: string) => set({ flightClass }),
   setFlights: (flights: FlightResponse) => set({ flights }),
   setFilter: (filter: {
+    sortBy: string;
     stops: string;
-    price: string;
     departureTime: string;
     arrivalTime: string;
-    duration: string;
     airlines: string[];
     flightClass: string;
   }) => set({ filter }),

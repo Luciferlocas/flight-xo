@@ -1,7 +1,6 @@
 import { ThemedText } from "@/components/themed-text";
 import { FlightResponse } from "@/schema/search/index.types";
-import { getTime } from "@/utils/date";
-import { getPaytmAirlineLogo, getStopsText } from "@/utils/flight";
+import { getAirlineLogo, getStopsText } from "@/utils/flight";
 import { useRouter } from "expo-router";
 import { PlaneTakeoff } from "lucide-react-native";
 import React from "react";
@@ -27,7 +26,7 @@ export const FlightCard = ({
         <View style={styles.airlineInfo}>
           <View style={styles.imageContainer}>
             <Image
-              source={{ uri: getPaytmAirlineLogo(flight.airlineCode) }}
+              source={{ uri: getAirlineLogo(flight.airlineCode) }}
               style={styles.image}
             />
           </View>
@@ -55,7 +54,7 @@ export const FlightCard = ({
             {flight.originCity}
           </ThemedText>
           <ThemedText style={styles.timeText}>
-            {getTime(new Date(flight.departureTime))}
+            {flight.departureTimeAirport}
           </ThemedText>
         </View>
 
@@ -70,7 +69,7 @@ export const FlightCard = ({
             {flight.destinationCity}
           </ThemedText>
           <ThemedText style={styles.timeText}>
-            {getTime(new Date(flight.arrivalTime))}
+            {flight.arrivalTimeAirport}
           </ThemedText>
         </View>
       </View>

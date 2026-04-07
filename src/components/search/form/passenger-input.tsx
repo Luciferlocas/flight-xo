@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   counterText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
     color: "#000",
     paddingVertical: 24,

@@ -5,14 +5,17 @@ import {
   TouchableOpacity,
   ScrollView,
   Pressable,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { useSearch } from "@/store";
 import { ThemedText } from "@/components/themed-text";
 import { X } from "lucide-react-native";
 import { commonStyles } from "@/constants/style";
 import { PassengerCounter } from "@/components/search/form";
+import { getAirlines } from "@/utils/filter";
+import { getAirlineLogo } from "@/utils/flight";
 
 export const FilterModal = ({
   visible,
@@ -21,7 +24,7 @@ export const FilterModal = ({
   visible: boolean;
   onClose: () => void;
 }) => {
-  const { filter, passengers, setFilter, setPassengers } = useSearch();
+  const { filter, passengers, flights, setFilter, setPassengers } = useSearch();
   const [localFilter, setLocalFilter] = useState(filter);
   const [localPassengers, setLocalPassengers] = useState(passengers);
 
@@ -33,15 +36,13 @@ export const FilterModal = ({
 
   const handleReset = () => {
     setLocalFilter({
+      sortBy: "price",
       stops: "",
       departureTime: "",
       arrivalTime: "",
-      duration: "",
-      price: "",
       airlines: [],
       flightClass: "",
     });
-    onClose();
   };
 
   const handleClose = () => {
@@ -49,24 +50,7 @@ export const FilterModal = ({
     onClose();
   };
 
-  const airlines = [
-    {
-      name: "Indigo",
-      price: "₹10,000",
-    },
-    {
-      name: "Vistara",
-      price: "₹12,000",
-    },
-    {
-      name: "Air India",
-      price: "₹15,000",
-    },
-    {
-      name: "SpiceJet",
-      price: "₹8,000",
-    },
-  ];
+  const airlines = getAirlines(flights?.flights || []);
 
   return (
     <Modal animationType="slide" transparent={false} visible={visible}>
@@ -80,6 +64,35 @@ export const FilterModal = ({
         <View style={commonStyles.dashLine} />
 
         <ScrollView style={styles.filters} showsVerticalScrollIndicator={false}>
+          <View style={styles.filterSection}>
+            <ThemedText style={styles.filterTitle}>Sort By</ThemedText>
+            <View>
+              <View style={commonStyles.dashLine} />
+              <View style={[commonStyles.flexRow]}>
+                {["price", "duration", "stops"].map((item, index) => (
+                  <Fragment key={item + index}>
+                    <Pressable
+                      style={[
+                        styles.button,
+                        localFilter.sortBy === item && styles.selected,
+                      ]}
+                      onPress={() =>
+                        setLocalFilter({ ...localFilter, sortBy: item })
+                      }
+                    >
+                      <ThemedText style={styles.filterLabel}>{item.slice(0, 1).toUpperCase() + item.slice(1)}</ThemedText>
+                    </Pressable>
+                    {index !== 2 && (
+                      <View style={commonStyles.dashLineVertical} />
+                    )}
+                  </Fragment>
+                ))}
+              </View>
+            </View>
+          </View>
+
+          <View style={commonStyles.dashLine} />
+
           <View style={styles.filterSection}>
             <ThemedText style={styles.filterTitle}>Passengers</ThemedText>
             <View>
@@ -97,9 +110,8 @@ export const FilterModal = ({
               <View style={commonStyles.dashLine} />
               <View style={[commonStyles.flexRow]}>
                 {["Non stop", "1 Stop", "2+ Stops"].map((item, index) => (
-                  <>
+                  <Fragment key={item + index}>
                     <Pressable
-                      key={item + index}
                       style={[
                         styles.button,
                         localFilter.stops === item && styles.selected,
@@ -113,7 +125,7 @@ export const FilterModal = ({
                     {index !== 2 && (
                       <View style={commonStyles.dashLineVertical} />
                     )}
-                  </>
+                  </Fragment>
                 ))}
               </View>
             </View>
@@ -129,6 +141,7 @@ export const FilterModal = ({
                 <Pressable
                   style={[
                     styles.button,
+                    { paddingVertical: 12 },
                     localFilter.departureTime === "Morning" && styles.selected,
                   ]}
                   onPress={() =>
@@ -136,11 +149,13 @@ export const FilterModal = ({
                   }
                 >
                   <ThemedText style={styles.filterLabel}>Morning</ThemedText>
+                  <ThemedText style={styles.time}>06:00 - 12:00</ThemedText>
                 </Pressable>
                 <View style={commonStyles.dashLineVertical} />
                 <Pressable
                   style={[
                     styles.button,
+                    { paddingVertical: 12 },
                     localFilter.departureTime === "Afternoon" &&
                     styles.selected,
                   ]}
@@ -152,6 +167,7 @@ export const FilterModal = ({
                   }
                 >
                   <ThemedText style={styles.filterLabel}>Afternoon</ThemedText>
+                  <ThemedText style={styles.time}>12:00 - 18:00</ThemedText>
                 </Pressable>
               </View>
 
@@ -160,6 +176,7 @@ export const FilterModal = ({
                 <Pressable
                   style={[
                     styles.button,
+                    { paddingVertical: 12 },
                     localFilter.departureTime === "Evening" && styles.selected,
                   ]}
                   onPress={() =>
@@ -167,11 +184,13 @@ export const FilterModal = ({
                   }
                 >
                   <ThemedText style={styles.filterLabel}>Evening</ThemedText>
+                  <ThemedText style={styles.time}>18:00 - 00:00</ThemedText>
                 </Pressable>
                 <View style={commonStyles.dashLineVertical} />
                 <Pressable
                   style={[
                     styles.button,
+                    { paddingVertical: 12 },
                     localFilter.departureTime === "Night" && styles.selected,
                   ]}
                   onPress={() =>
@@ -179,6 +198,7 @@ export const FilterModal = ({
                   }
                 >
                   <ThemedText style={styles.filterLabel}>Night</ThemedText>
+                  <ThemedText style={styles.time}>00:00 - 06:00</ThemedText>
                 </Pressable>
               </View>
             </View>
@@ -194,6 +214,7 @@ export const FilterModal = ({
                 <Pressable
                   style={[
                     styles.button,
+                    { paddingVertical: 12 },
                     localFilter.arrivalTime === "Morning" && styles.selected,
                   ]}
                   onPress={() =>
@@ -201,11 +222,13 @@ export const FilterModal = ({
                   }
                 >
                   <ThemedText style={styles.filterLabel}>Morning</ThemedText>
+                  <ThemedText style={styles.time}>06:00 - 12:00</ThemedText>
                 </Pressable>
                 <View style={commonStyles.dashLineVertical} />
                 <Pressable
                   style={[
                     styles.button,
+                    { paddingVertical: 12 },
                     localFilter.arrivalTime === "Afternoon" && styles.selected,
                   ]}
                   onPress={() =>
@@ -213,6 +236,7 @@ export const FilterModal = ({
                   }
                 >
                   <ThemedText style={styles.filterLabel}>Afternoon</ThemedText>
+                  <ThemedText style={styles.time}>12:00 - 18:00</ThemedText>
                 </Pressable>
               </View>
 
@@ -221,6 +245,7 @@ export const FilterModal = ({
                 <Pressable
                   style={[
                     styles.button,
+                    { paddingVertical: 12 },
                     localFilter.arrivalTime === "Evening" && styles.selected,
                   ]}
                   onPress={() =>
@@ -228,11 +253,13 @@ export const FilterModal = ({
                   }
                 >
                   <ThemedText style={styles.filterLabel}>Evening</ThemedText>
+                  <ThemedText style={styles.time}>18:00 - 00:00</ThemedText>
                 </Pressable>
                 <View style={commonStyles.dashLineVertical} />
                 <Pressable
                   style={[
                     styles.button,
+                    { paddingVertical: 12 },
                     localFilter.arrivalTime === "Night" && styles.selected,
                   ]}
                   onPress={() =>
@@ -240,6 +267,7 @@ export const FilterModal = ({
                   }
                 >
                   <ThemedText style={styles.filterLabel}>Night</ThemedText>
+                  <ThemedText style={styles.time}>00:00 - 06:00</ThemedText>
                 </Pressable>
               </View>
             </View>
@@ -305,9 +333,8 @@ export const FilterModal = ({
               <View style={commonStyles.dashLine} />
               <View>
                 {airlines.map((airline, index) => (
-                  <>
+                  <Fragment key={airline.name + index}>
                     <Pressable
-                      key={airline.name}
                       style={[
                         styles.button,
                         styles.airline,
@@ -321,17 +348,25 @@ export const FilterModal = ({
                         })
                       }
                     >
-                      <ThemedText style={styles.filterLabel}>
-                        {airline.name}
-                      </ThemedText>
+                      <View style={commonStyles.flexRow}>
+                        <View style={styles.imageContainer}>
+                          <Image
+                            style={styles.airlineLogo}
+                            source={{ uri: getAirlineLogo(airline.code) }}
+                          />
+                        </View>
+                        <ThemedText style={styles.filterLabel}>
+                          {airline.name}
+                        </ThemedText>
+                      </View>
                       <ThemedText style={styles.airlinePrice}>
-                        {airline.price}
+                        ₹ {airline.price}
                       </ThemedText>
                     </Pressable>
                     {airlines.length - 1 !== index && (
                       <View style={commonStyles.dashLine} />
                     )}
-                  </>
+                  </Fragment>
                 ))}
               </View>
             </View>
@@ -339,6 +374,7 @@ export const FilterModal = ({
         </ScrollView>
 
         <View style={commonStyles.dashLine} />
+        
         <View style={styles.footer}>
           <TouchableOpacity style={styles.button} onPress={handleReset}>
             <ThemedText style={styles.buttonText}>Reset</ThemedText>
@@ -391,6 +427,11 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "center",
   },
+  time: {
+    fontSize: 14,
+    color: "#000",
+    textAlign: "center",
+  },
   footer: {
     flexDirection: "row",
     alignItems: "center",
@@ -418,5 +459,22 @@ const styles = StyleSheet.create({
   airlinePrice: {
     fontSize: 16,
     color: "#000",
+  },
+  airlineLogo: {
+    height: "100%",
+    width: "100%",
+    resizeMode: "cover",
+  },
+  imageContainer: {
+    height: 28,
+    width: 28,
+    borderRadius: 20,
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderStyle: "dashed",
+    borderColor: "#000",
+    marginRight: 12,
   },
 });

@@ -41,7 +41,7 @@ const AIRLINE_LOGO_CONFIG = {
     "https://paytm-travel-mum-akamai.paytm.com/travel_db/flights/airlines+logo/defaultcarrier.png",
 };
 
-export const getPaytmAirlineLogo = (
+export const getAirlineLogo = (
   airlineCode: string | undefined | null
 ): string => {
   if (!airlineCode || airlineCode.trim() === "") {
