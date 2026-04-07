@@ -6,11 +6,14 @@ import { getShortDate } from "@/utils/date";
 import { getFilteredFlights } from "@/utils/filter";
 import { Link } from "expo-router";
 import { ArrowLeft, Filter } from "lucide-react-native";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Dimensions, Pressable, StyleSheet, View } from "react-native";
+import { FilterModal } from "@/components/flight/modal/filters";
+import { useState } from "react";
 
 const { width, height } = Dimensions.get("window");
 
 export default function FlightsScreen() {
+  const [open, setOpen] = useState(false);
   const { flights, from, to, date, filter } = useSearch();
   const filteredFlights = getFilteredFlights(flights?.flights || [], filter);
 
@@ -28,14 +31,15 @@ export default function FlightsScreen() {
             {getShortDate(date.departure)}
           </ThemedText>
         </View>
-        <View style={styles.icon}>
+        <Pressable style={styles.icon} onPress={() => setOpen(true)}>
           <Filter size={24} color="#000" />
-        </View>
+        </Pressable>
       </View>
       <View style={commonStyles.dashLine} />
       <FlightFilters />
       <View style={commonStyles.dashLine} />
       <FlightList flights={filteredFlights} />
+      <FilterModal visible={open} onClose={() => setOpen(false)} />
     </View>
   );
 }

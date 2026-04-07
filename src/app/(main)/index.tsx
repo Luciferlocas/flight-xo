@@ -31,15 +31,18 @@ export default function HomeScreen() {
     passengers,
     tripType,
     deviceId,
+    flightClass,
     setFrom,
     setTo,
     setFlights,
+    resetFilter,
   } = useSearch();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSearch = async () => {
     setLoading(true);
+    resetFilter();
     try {
       const response = await FlightService.searchFlights({
         origin: from.iata,
@@ -51,6 +54,7 @@ export default function HomeScreen() {
         adults: passengers.adults,
         children: passengers.children,
         infants: passengers.infants,
+        flightClass,
         deviceId,
       });
       if (response.success && response.data) {

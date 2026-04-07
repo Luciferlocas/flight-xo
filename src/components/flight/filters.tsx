@@ -1,33 +1,49 @@
 import { useSearch } from "@/store/search";
 import { getShortDate } from "@/utils/date";
-import { CalendarDays, MapPin, Ticket, UsersRound } from "lucide-react-native";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ArrowDownUp, Ban, CalendarDays, Plane, PlaneLanding, PlaneTakeoff, Ticket, UsersRound } from "lucide-react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { ThemedText } from "../themed-text";
 import { getClassName } from "@/utils/flight";
-import { FilterModal } from "./modal/filters";
-import { useState } from "react";
 
 export const FlightFilters = () => {
-  const { from, to, date, passengers, flightClass } = useSearch();
-  const [open, setOpen] = useState(false);
+  const { date, passengers, filter } = useSearch();
 
   const filters = [
-    {
-      icon: <MapPin size={16} />,
-      text: `${from.iata} - ${to.iata}`,
-    },
     {
       icon: <CalendarDays size={16} />,
       text: getShortDate(date.departure),
     },
     {
       icon: <Ticket size={16} />,
-      text: getClassName(flightClass),
+      text: getClassName(filter.flightClass),
     },
     {
       icon: <UsersRound size={16} />,
       text: `${passengers.adults} Adults`,
     },
+    {
+      icon: <ArrowDownUp size={16} />,
+      text: filter.sortBy.charAt(0).toUpperCase() + filter.sortBy.slice(1)
+    },
+    ...(filter.departureTime ? [{
+      icon: <PlaneTakeoff size={16} />,
+      text: filter.departureTime
+    }] : []),
+    ...(filter.arrivalTime ? [{
+      icon: <PlaneLanding size={16} />,
+      text: filter.arrivalTime
+    }] : []),
+    ...(filter.stops ? [{
+      icon: <Ban size={16} />,
+      text: filter.stops
+    }] : []),
+    ...(filter.airlines.length > 0 ? [{
+      icon: <Plane size={16} />,
+      text: filter.airlines.join(", ")
+    }] : [{
+      icon: <Plane size={16} />,
+      text: "All Airlines"
+    }]),
   ];
 
   return (
@@ -35,18 +51,16 @@ export const FlightFilters = () => {
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.filters}>
           {filters.map((filter, index) => (
-            <Pressable
+            <View
               key={index}
               style={styles.filterItem}
-              onPress={() => setOpen(true)}
             >
               {filter.icon}
               <ThemedText style={styles.filterText}>{filter.text}</ThemedText>
-            </Pressable>
+            </View>
           ))}
         </View>
       </ScrollView>
-      <FilterModal visible={open} onClose={() => setOpen(false)} />
     </View>
   );
 };
