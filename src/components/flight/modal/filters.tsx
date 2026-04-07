@@ -16,38 +16,117 @@ import { commonStyles } from "@/constants/style";
 import { PassengerCounter } from "@/components/search/form";
 import { getAirlines } from "@/utils/filter";
 import { getAirlineLogo } from "@/utils/flight";
+import { Spinner } from "@/components/ui/spinner";
+import { FlightService } from "@/service";
+import { getFormattedDate } from "@/utils/date";
 
-export const FilterModal = ({
-  visible,
-  onClose,
-}: {
-  visible: boolean;
-  onClose: () => void;
-}) => {
-  const { filter, passengers, flights, setFilter, setPassengers } = useSearch();
+export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
+  const { filter, passengers, flights, from, to, date, tripType, deviceId, setFilter, setPassengers, setFlights } = useSearch();
   const [localFilter, setLocalFilter] = useState(filter);
   const [localPassengers, setLocalPassengers] = useState(passengers);
+  const [loading, setLoading] = useState(false);
 
-  const handleApply = () => {
-    setPassengers(localPassengers);
-    setFilter(localFilter);
-    onClose();
+  const handleApply = async () => {
+    setLoading(true);
+    try {
+      setPassengers(localPassengers);
+      setFilter(localFilter);
+      const res = await FlightService.searchFlights({
+        origin: from.iata,
+        destination: to.iata,
+        departureDate: getFormattedDate(date.departure),
+        ...(tripType === "roundTrip" && { returnDate: getFormattedDate(date.return) }),
+        adults: localPassengers.adults,
+        children: localPassengers.children,
+        infants: localPassengers.infants,
+        flightClass: localFilter.flightClass,
+        deviceId,
+      });
+      if (res.success && res.data) setFlights(res.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+      onClose();
+    }
   };
 
   const handleReset = () => {
+    setLocalFilter({ sortBy: "price", stops: "", departureTime: "", arrivalTime: "", airlines: [], flightClass: "E" });
+    setLocalPassengers({ adults: 1, children: 0, infants: 0 });
+  };
+
+  const handleSelectAirline = (airline: string) => {
     setLocalFilter({
-      sortBy: "price",
-      stops: "",
-      departureTime: "",
-      arrivalTime: "",
-      airlines: [],
-      flightClass: "",
+      ...localFilter,
+      airlines: localFilter.airlines.includes(airline)
+        ? localFilter.airlines.filter((a) => a !== airline)
+        : [...localFilter.airlines, airline],
     });
   };
 
-  const handleClose = () => {
-    setLocalFilter(filter);
-    onClose();
+  const FilterGroup = ({ title, options, value, field, formatLabel = (s: string) => s }: any) => (
+    <View style={styles.filterSection}>
+      <ThemedText style={styles.filterTitle}>{title}</ThemedText>
+      <View style={commonStyles.dashLine} />
+      <View style={commonStyles.flexRow}>
+        {options.map((item: string, index: number) => (
+          <Fragment key={item}>
+            <Pressable
+              style={[styles.button, value === item && styles.selected]}
+              onPress={() => setLocalFilter({ ...localFilter, [field]: item })}
+            >
+              <ThemedText style={styles.filterLabel}>{formatLabel(item)}</ThemedText>
+            </Pressable>
+            {index !== options.length - 1 && <View style={commonStyles.dashLineVertical} />}
+          </Fragment>
+        ))}
+      </View>
+    </View>
+  );
+
+  const TimeGroup = ({ title, field }: { title: string, field: 'departureTime' | 'arrivalTime' }) => {
+    const slots = [
+      { label: "Morning", range: "06:00 - 12:00" },
+      { label: "Afternoon", range: "12:00 - 18:00" },
+      { label: "Evening", range: "18:00 - 00:00" },
+      { label: "Night", range: "00:00 - 06:00" },
+    ];
+
+    const handleSelectTime = (time: string) => {
+      setLocalFilter({
+        ...localFilter,
+        [field]: localFilter[field] === time
+          ? ""
+          : time,
+      });
+    }
+
+    return (
+      <View style={styles.filterSection}>
+        <ThemedText style={styles.filterTitle}>{title}</ThemedText>
+        <View style={commonStyles.dashLine} />
+        {[0, 2].map((startIndex) => (
+          <Fragment key={startIndex}>
+            <View style={commonStyles.flexRow}>
+              {slots.slice(startIndex, startIndex + 2).map((slot, idx) => (
+                <Fragment key={slot.label}>
+                  <Pressable
+                    style={[styles.button, { paddingVertical: 12 }, localFilter[field] === slot.label && styles.selected]}
+                    onPress={() => handleSelectTime(slot.label)}
+                  >
+                    <ThemedText style={styles.filterLabel}>{slot.label}</ThemedText>
+                    <ThemedText style={styles.time}>{slot.range}</ThemedText>
+                  </Pressable>
+                  {idx === 0 && <View style={commonStyles.dashLineVertical} />}
+                </Fragment>
+              ))}
+            </View>
+            {startIndex === 0 && <View style={commonStyles.dashLine} />}
+          </Fragment>
+        ))}
+      </View>
+    );
   };
 
   const airlines = getAirlines(flights?.flights || []);
@@ -56,7 +135,7 @@ export const FilterModal = ({
     <Modal animationType="slide" transparent={false} visible={visible}>
       <SafeAreaView style={styles.modalContainer}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={handleClose}>
+          <TouchableOpacity style={styles.backButton} onPress={() => { setLocalFilter(filter); onClose(); }}>
             <X size={28} color="#000" />
           </TouchableOpacity>
           <ThemedText style={styles.headerTitle}>Filters</ThemedText>
@@ -64,327 +143,67 @@ export const FilterModal = ({
         <View style={commonStyles.dashLine} />
 
         <ScrollView style={styles.filters} showsVerticalScrollIndicator={false}>
-          <View style={styles.filterSection}>
-            <ThemedText style={styles.filterTitle}>Sort By</ThemedText>
-            <View>
-              <View style={commonStyles.dashLine} />
-              <View style={[commonStyles.flexRow]}>
-                {["price", "duration", "stops"].map((item, index) => (
-                  <Fragment key={item + index}>
-                    <Pressable
-                      style={[
-                        styles.button,
-                        localFilter.sortBy === item && styles.selected,
-                      ]}
-                      onPress={() =>
-                        setLocalFilter({ ...localFilter, sortBy: item })
-                      }
-                    >
-                      <ThemedText style={styles.filterLabel}>{item.slice(0, 1).toUpperCase() + item.slice(1)}</ThemedText>
-                    </Pressable>
-                    {index !== 2 && (
-                      <View style={commonStyles.dashLineVertical} />
-                    )}
-                  </Fragment>
-                ))}
-              </View>
-            </View>
-          </View>
-
+          <FilterGroup
+            title="Sort By"
+            field="sortBy"
+            value={localFilter.sortBy}
+            options={["price", "duration", "stops"]}
+            formatLabel={(s: string) => s.charAt(0).toUpperCase() + s.slice(1)}
+          />
           <View style={commonStyles.dashLine} />
 
           <View style={styles.filterSection}>
             <ThemedText style={styles.filterTitle}>Passengers</ThemedText>
-            <View>
-              <View style={commonStyles.dashLine} />
-              <PassengerCounter
-                passengers={localPassengers}
-                setPassengers={setLocalPassengers}
-              />
-            </View>
+            <View style={commonStyles.dashLine} />
+            <PassengerCounter passengers={localPassengers} setPassengers={setLocalPassengers} />
           </View>
 
-          <View style={styles.filterSection}>
-            <ThemedText style={styles.filterTitle}>Stops</ThemedText>
-            <View>
-              <View style={commonStyles.dashLine} />
-              <View style={[commonStyles.flexRow]}>
-                {["Non stop", "1 Stop", "2+ Stops"].map((item, index) => (
-                  <Fragment key={item + index}>
-                    <Pressable
-                      style={[
-                        styles.button,
-                        localFilter.stops === item && styles.selected,
-                      ]}
-                      onPress={() =>
-                        setLocalFilter({ ...localFilter, stops: item })
-                      }
-                    >
-                      <ThemedText style={styles.filterLabel}>{item}</ThemedText>
-                    </Pressable>
-                    {index !== 2 && (
-                      <View style={commonStyles.dashLineVertical} />
-                    )}
-                  </Fragment>
-                ))}
-              </View>
-            </View>
-          </View>
-
+          <FilterGroup title="Stops" field="stops" value={localFilter.stops} options={["Non stop", "1 Stop", "2+ Stops"]} />
           <View style={commonStyles.dashLine} />
-
-          <View style={styles.filterSection}>
-            <ThemedText style={styles.filterTitle}>Departure Time</ThemedText>
-            <View>
-              <View style={commonStyles.dashLine} />
-              <View style={[commonStyles.flexRow]}>
-                <Pressable
-                  style={[
-                    styles.button,
-                    { paddingVertical: 12 },
-                    localFilter.departureTime === "Morning" && styles.selected,
-                  ]}
-                  onPress={() =>
-                    setLocalFilter({ ...localFilter, departureTime: "Morning" })
-                  }
-                >
-                  <ThemedText style={styles.filterLabel}>Morning</ThemedText>
-                  <ThemedText style={styles.time}>06:00 - 12:00</ThemedText>
-                </Pressable>
-                <View style={commonStyles.dashLineVertical} />
-                <Pressable
-                  style={[
-                    styles.button,
-                    { paddingVertical: 12 },
-                    localFilter.departureTime === "Afternoon" &&
-                    styles.selected,
-                  ]}
-                  onPress={() =>
-                    setLocalFilter({
-                      ...localFilter,
-                      departureTime: "Afternoon",
-                    })
-                  }
-                >
-                  <ThemedText style={styles.filterLabel}>Afternoon</ThemedText>
-                  <ThemedText style={styles.time}>12:00 - 18:00</ThemedText>
-                </Pressable>
-              </View>
-
-              <View style={commonStyles.dashLine} />
-              <View style={[commonStyles.flexRow]}>
-                <Pressable
-                  style={[
-                    styles.button,
-                    { paddingVertical: 12 },
-                    localFilter.departureTime === "Evening" && styles.selected,
-                  ]}
-                  onPress={() =>
-                    setLocalFilter({ ...localFilter, departureTime: "Evening" })
-                  }
-                >
-                  <ThemedText style={styles.filterLabel}>Evening</ThemedText>
-                  <ThemedText style={styles.time}>18:00 - 00:00</ThemedText>
-                </Pressable>
-                <View style={commonStyles.dashLineVertical} />
-                <Pressable
-                  style={[
-                    styles.button,
-                    { paddingVertical: 12 },
-                    localFilter.departureTime === "Night" && styles.selected,
-                  ]}
-                  onPress={() =>
-                    setLocalFilter({ ...localFilter, departureTime: "Night" })
-                  }
-                >
-                  <ThemedText style={styles.filterLabel}>Night</ThemedText>
-                  <ThemedText style={styles.time}>00:00 - 06:00</ThemedText>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-
+          <TimeGroup title="Departure Time" field="departureTime" />
           <View style={commonStyles.dashLine} />
-
-          <View style={styles.filterSection}>
-            <ThemedText style={styles.filterTitle}>Arrival Time</ThemedText>
-            <View>
-              <View style={commonStyles.dashLine} />
-              <View style={[commonStyles.flexRow]}>
-                <Pressable
-                  style={[
-                    styles.button,
-                    { paddingVertical: 12 },
-                    localFilter.arrivalTime === "Morning" && styles.selected,
-                  ]}
-                  onPress={() =>
-                    setLocalFilter({ ...localFilter, arrivalTime: "Morning" })
-                  }
-                >
-                  <ThemedText style={styles.filterLabel}>Morning</ThemedText>
-                  <ThemedText style={styles.time}>06:00 - 12:00</ThemedText>
-                </Pressable>
-                <View style={commonStyles.dashLineVertical} />
-                <Pressable
-                  style={[
-                    styles.button,
-                    { paddingVertical: 12 },
-                    localFilter.arrivalTime === "Afternoon" && styles.selected,
-                  ]}
-                  onPress={() =>
-                    setLocalFilter({ ...localFilter, arrivalTime: "Afternoon" })
-                  }
-                >
-                  <ThemedText style={styles.filterLabel}>Afternoon</ThemedText>
-                  <ThemedText style={styles.time}>12:00 - 18:00</ThemedText>
-                </Pressable>
-              </View>
-
-              <View style={commonStyles.dashLine} />
-              <View style={[commonStyles.flexRow]}>
-                <Pressable
-                  style={[
-                    styles.button,
-                    { paddingVertical: 12 },
-                    localFilter.arrivalTime === "Evening" && styles.selected,
-                  ]}
-                  onPress={() =>
-                    setLocalFilter({ ...localFilter, arrivalTime: "Evening" })
-                  }
-                >
-                  <ThemedText style={styles.filterLabel}>Evening</ThemedText>
-                  <ThemedText style={styles.time}>18:00 - 00:00</ThemedText>
-                </Pressable>
-                <View style={commonStyles.dashLineVertical} />
-                <Pressable
-                  style={[
-                    styles.button,
-                    { paddingVertical: 12 },
-                    localFilter.arrivalTime === "Night" && styles.selected,
-                  ]}
-                  onPress={() =>
-                    setLocalFilter({ ...localFilter, arrivalTime: "Night" })
-                  }
-                >
-                  <ThemedText style={styles.filterLabel}>Night</ThemedText>
-                  <ThemedText style={styles.time}>00:00 - 06:00</ThemedText>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-
+          <TimeGroup title="Arrival Time" field="arrivalTime" />
           <View style={commonStyles.dashLine} />
-
-          <View style={styles.filterSection}>
-            <ThemedText style={styles.filterTitle}>Class</ThemedText>
-            <View>
-              <View style={commonStyles.dashLine} />
-              <View style={[commonStyles.flexRow]}>
-                <Pressable
-                  style={[
-                    styles.button,
-                    localFilter.flightClass === "E" && styles.selected,
-                  ]}
-                  onPress={() =>
-                    setLocalFilter({ ...localFilter, flightClass: "E" })
-                  }
-                >
-                  <ThemedText style={styles.filterLabel}>Economy</ThemedText>
-                </Pressable>
-                <View style={commonStyles.dashLineVertical} />
-                <Pressable
-                  style={[
-                    styles.button,
-                    localFilter.flightClass === "P" &&
-                    styles.selected,
-                  ]}
-                  onPress={() =>
-                    setLocalFilter({
-                      ...localFilter,
-                      flightClass: "P",
-                    })
-                  }
-                >
-                  <ThemedText style={styles.filterLabel}>
-                    Premium Eco
-                  </ThemedText>
-                </Pressable>
-                <View style={commonStyles.dashLineVertical} />
-                <Pressable
-                  style={[
-                    styles.button,
-                    localFilter.flightClass === "B" && styles.selected,
-                  ]}
-                  onPress={() =>
-                    setLocalFilter({ ...localFilter, flightClass: "B" })
-                  }
-                >
-                  <ThemedText style={styles.filterLabel}>Business</ThemedText>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-
+          <FilterGroup
+            title="Class"
+            field="flightClass"
+            value={localFilter.flightClass}
+            options={["E", "P", "B"]}
+            formatLabel={(s: string) => s === "E" ? "Economy" : s === "P" ? "Premium Eco" : "Business"}
+          />
           <View style={commonStyles.dashLine} />
-
           <View style={styles.filterSection}>
             <ThemedText style={styles.filterTitle}>Airlines</ThemedText>
-            <View>
-              <View style={commonStyles.dashLine} />
-              <View>
-                {airlines.map((airline, index) => (
-                  <Fragment key={airline.name + index}>
-                    <Pressable
-                      style={[
-                        styles.button,
-                        styles.airline,
-                        localFilter.airlines.includes(airline.name) &&
-                        styles.selected,
-                      ]}
-                      onPress={() =>
-                        setLocalFilter({
-                          ...localFilter,
-                          airlines: [...localFilter.airlines, airline.name],
-                        })
-                      }
-                    >
-                      <View style={commonStyles.flexRow}>
-                        <View style={styles.imageContainer}>
-                          <Image
-                            style={styles.airlineLogo}
-                            source={{ uri: getAirlineLogo(airline.code) }}
-                          />
-                        </View>
-                        <ThemedText style={styles.filterLabel}>
-                          {airline.name}
-                        </ThemedText>
-                      </View>
-                      <ThemedText style={styles.airlinePrice}>
-                        ₹ {airline.price}
-                      </ThemedText>
-                    </Pressable>
-                    {airlines.length - 1 !== index && (
-                      <View style={commonStyles.dashLine} />
-                    )}
-                  </Fragment>
-                ))}
-              </View>
-            </View>
+            <View style={commonStyles.dashLine} />
+            {airlines.map((airline, index) => (
+              <Fragment key={airline.name}>
+                <Pressable
+                  style={[styles.button, styles.airline, localFilter.airlines.includes(airline.name) && styles.selected]}
+                  onPress={() => handleSelectAirline(airline.name)}
+                >
+                  <View style={commonStyles.flexRow}>
+                    <View style={styles.imageContainer}>
+                      <Image style={styles.airlineLogo} source={{ uri: getAirlineLogo(airline.code) }} />
+                    </View>
+                    <ThemedText style={styles.filterLabel}>{airline.name}</ThemedText>
+                  </View>
+                  <ThemedText style={styles.airlinePrice}>₹ {airline.price}</ThemedText>
+                </Pressable>
+                {index !== airlines.length - 1 && <View style={commonStyles.dashLine} />}
+              </Fragment>
+            ))}
           </View>
         </ScrollView>
 
         <View style={commonStyles.dashLine} />
-        
+
         <View style={styles.footer}>
           <TouchableOpacity style={styles.button} onPress={handleReset}>
             <ThemedText style={styles.buttonText}>Reset</ThemedText>
           </TouchableOpacity>
           <View style={commonStyles.dashLineVertical} />
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: "#FFD700" }]}
-            onPress={handleApply}
-          >
-            <ThemedText style={styles.buttonText}>Apply</ThemedText>
+          <TouchableOpacity style={[styles.button, { backgroundColor: "#FFD700" }]} onPress={handleApply}>
+            {loading ? <Spinner /> : <ThemedText style={styles.buttonText}>Apply</ThemedText>}
           </TouchableOpacity>
         </View>
       </SafeAreaView>

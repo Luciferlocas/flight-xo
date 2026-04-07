@@ -138,6 +138,17 @@ export const useSearch = () => {
     setDeviceId(deviceId);
   };
 
+  const resetFilter = () => {
+    setFilter({
+      sortBy: "price",
+      stops: "",
+      departureTime: "",
+      arrivalTime: "",
+      airlines: [],
+      flightClass: "E",
+    })
+  }
+
   return {
     tripType,
     from,
@@ -158,5 +169,6 @@ export const useSearch = () => {
     setFlights,
     initializeDeviceId,
     setFilter,
+    resetFilter,
   };
 };

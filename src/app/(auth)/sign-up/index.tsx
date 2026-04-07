@@ -217,7 +217,7 @@ export default function SignUpScreen() {
               )}
               {otp.verified ? (
                 <View style={{ paddingHorizontal: 12 }}>
-                  <CircleCheck size={24} color="#000000" fill="#8ca986ff" />
+                  <CircleCheck size={24} color="#000000" fill="#aae2a0ff" />
                 </View>
               ) : (
                 <>
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   verifyButton: {
     paddingVertical: 24,
     paddingHorizontal: 12,
-    backgroundColor: "#8ca986ff",
+    backgroundColor: "#aae2a0ff",
     alignItems: "center",
     justifyContent: "center",
     width: width / 5,

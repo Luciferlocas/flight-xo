@@ -84,6 +84,7 @@ export const FlightSearchRequestSchema = z.object({
   children: z.number(),
   infants: z.number(),
   deviceId: z.string(),
+  flightClass: z.string(),
 });
 
 const DiscountSchema = z.object({
