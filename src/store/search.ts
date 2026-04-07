@@ -24,7 +24,17 @@ interface SearchState {
     children: number;
     infants: number;
   };
+  flightClass: string;
   flights: FlightResponse | null;
+  filter: {
+    stops: string;
+    price: string;
+    departureTime: string;
+    arrivalTime: string;
+    duration: string;
+    airlines: string[];
+    flightClass: string;
+  };
   setDeviceId: (deviceId: string) => void;
   setTripType: (tripType: "roundTrip" | "oneWay") => void;
   setFrom: (from: { city: string; country: string; iata: string }) => void;
@@ -35,7 +45,17 @@ interface SearchState {
     children: number;
     infants: number;
   }) => void;
+  setFlightClass: (flightClass: string) => void;
   setFlights: (flights: FlightResponse) => void;
+  setFilter: (filter: {
+    stops: string;
+    price: string;
+    departureTime: string;
+    arrivalTime: string;
+    duration: string;
+    airlines: string[];
+    flightClass: string;
+  }) => void;
 }
 
 export const useSearchStore = create<SearchState>((set) => ({
@@ -60,7 +80,17 @@ export const useSearchStore = create<SearchState>((set) => ({
     children: 0,
     infants: 0,
   },
+  flightClass: "E",
   flights: null,
+  filter: {
+    stops: "",
+    price: "",
+    departureTime: "",
+    arrivalTime: "",
+    duration: "",
+    airlines: [],
+    flightClass: "",
+  },
   setDeviceId: (deviceId: string) => set({ deviceId }),
   setTripType: (tripType: "roundTrip" | "oneWay") => set({ tripType }),
   setFrom: (from: { city: string; country: string; iata: string }) =>
@@ -72,7 +102,17 @@ export const useSearchStore = create<SearchState>((set) => ({
     children: number;
     infants: number;
   }) => set({ passengers }),
+  setFlightClass: (flightClass: string) => set({ flightClass }),
   setFlights: (flights: FlightResponse) => set({ flights }),
+  setFilter: (filter: {
+    stops: string;
+    price: string;
+    departureTime: string;
+    arrivalTime: string;
+    duration: string;
+    airlines: string[];
+    flightClass: string;
+  }) => set({ filter }),
 }));
 
 export const useSearch = () => {
@@ -84,13 +124,17 @@ export const useSearch = () => {
     passengers,
     flights,
     deviceId,
+    flightClass,
+    filter,
     setDeviceId,
     setTripType,
     setFrom,
     setTo,
     setDate,
     setPassengers,
+    setFlightClass,
     setFlights,
+    setFilter,
   } = useSearchStore();
 
   const initializeDeviceId = async () => {
@@ -106,13 +150,17 @@ export const useSearch = () => {
     passengers,
     flights,
     deviceId,
+    flightClass,
+    filter,
     setDeviceId,
     setTripType,
     setFrom,
     setTo,
     setDate,
     setPassengers,
+    setFlightClass,
     setFlights,
     initializeDeviceId,
+    setFilter,
   };
 };

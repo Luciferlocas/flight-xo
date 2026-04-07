@@ -65,19 +65,18 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { width, height }]}>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <ThemedText style={styles.title}>FLIGHT-XO</ThemedText>
+        <View style={styles.notification}>
+          <BellIcon size={24} color="#000" />
+        </View>
+      </View>
+      <View style={commonStyles.dashLine} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={styles.header}>
-          <ThemedText style={styles.title}>FLIGHT-XO</ThemedText>
-          <View style={styles.notification}>
-            <BellIcon size={24} color="#000" />
-          </View>
-        </View>
-        <View style={commonStyles.dashLine} />
-
         <View>
           <TripTypeInput />
           <View style={styles.dividerContainer}>
@@ -125,14 +124,13 @@ export default function HomeScreen() {
           </ThemedText>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EAEAE2",
   },
   scrollContent: {
     flexGrow: 1,

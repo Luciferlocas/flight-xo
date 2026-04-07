@@ -79,3 +79,16 @@ export const getFareServiceIcon = (icon: string) => {
       return CopyPlus;
   }
 };
+
+export const getClassName = (flightClass: string) => {
+  switch (flightClass) {
+    case "E":
+      return "Economy";
+    case "B":
+      return "Business";
+    case "P":
+      return "Premium Economy";
+    default:
+      return "Economy";
+  }
+};

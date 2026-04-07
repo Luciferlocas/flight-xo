@@ -1,11 +1,15 @@
 import { useSearch } from "@/store/search";
 import { getShortDate } from "@/utils/date";
 import { CalendarDays, MapPin, Ticket, UsersRound } from "lucide-react-native";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { ThemedText } from "../themed-text";
+import { getClassName } from "@/utils/flight";
+import { FilterModal } from "./modal/filters";
+import { useState } from "react";
 
 export const FlightFilters = () => {
-  const { from, to, date, passengers } = useSearch();
+  const { from, to, date, passengers, flightClass } = useSearch();
+  const [open, setOpen] = useState(false);
 
   const filters = [
     {
@@ -18,7 +22,7 @@ export const FlightFilters = () => {
     },
     {
       icon: <Ticket size={16} />,
-      text: "Economy",
+      text: getClassName(flightClass),
     },
     {
       icon: <UsersRound size={16} />,
@@ -27,23 +31,30 @@ export const FlightFilters = () => {
   ];
 
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View style={styles.filters}>
-        {filters.map((filter, index) => (
-          <View key={index} style={styles.filterItem}>
-            {filter.icon}
-            <ThemedText style={styles.filterText}>{filter.text}</ThemedText>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+    <View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={styles.filters}>
+          {filters.map((filter, index) => (
+            <Pressable
+              key={index}
+              style={styles.filterItem}
+              onPress={() => setOpen(true)}
+            >
+              {filter.icon}
+              <ThemedText style={styles.filterText}>{filter.text}</ThemedText>
+            </Pressable>
+          ))}
+        </View>
+      </ScrollView>
+      <FilterModal visible={open} onClose={() => setOpen(false)} />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   filters: {
     paddingHorizontal: 12,
-    paddingVertical: 28,
+    paddingVertical: 20,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,

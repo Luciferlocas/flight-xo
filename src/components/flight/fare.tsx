@@ -8,7 +8,7 @@ import { getFareServiceIcon } from "@/utils/flight";
 export const FlightFareCard = ({ fares }: { fares: FlightFareResponse }) => {
   return (
     <View style={styles.fareContainer}>
-      {fares?.fares?.map((fare) => (
+      {fares?.fares?.map((fare, index) => (
         <View key={fare.fare_id} style={styles.cardWrapper}>
           <View style={styles.cardContent}>
             <View style={styles.headerRow}>
@@ -16,7 +16,8 @@ export const FlightFareCard = ({ fares }: { fares: FlightFareResponse }) => {
                 <View style={styles.hanger1} />
                 <View style={styles.hanger2} />
                 <ThemedText style={styles.badgeText}>
-                  {fare.fare_heading.substring(0, 1) + fare.fare_heading.substring(1).toLowerCase()}
+                  {fare.fare_heading.substring(0, 1) +
+                    fare.fare_heading.substring(1).toLowerCase()}
                 </ThemedText>
               </View>
               <View style={styles.priceContainer}>
@@ -32,7 +33,7 @@ export const FlightFareCard = ({ fares }: { fares: FlightFareResponse }) => {
                 const label = service.row_display_text;
                 const value =
                   service.available_col_display_text_by_fare_product[
-                  fare.fare_heading
+                    fare.fare_heading
                   ];
 
                 return (
@@ -50,7 +51,9 @@ export const FlightFareCard = ({ fares }: { fares: FlightFareResponse }) => {
               <ThemedText style={styles.bookButtonText}>Book Now</ThemedText>
             </TouchableOpacity>
           </View>
-          <View style={commonStyles.dashLine} />
+          {fares?.fares?.length - 1 !== index && (
+            <View style={commonStyles.dashLine} />
+          )}
         </View>
       ))}
     </View>
@@ -84,7 +87,6 @@ export const FlightFareSeparator = () => {
 const styles = StyleSheet.create({
   fareContainer: {
     gap: 12,
-    paddingBottom: 80,
   },
   iconContainer: {
     padding: 4,

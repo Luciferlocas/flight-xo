@@ -13,6 +13,7 @@ import { ThemedText } from "@/components/themed-text";
 import { Spinner } from "@/components/ui/spinner";
 import { FlightService } from "@/service";
 import { useDebounce } from "@/hooks/use-debounce";
+import { commonStyles } from "@/constants/style";
 
 interface SearchModalProps {
   visible: boolean;
@@ -62,7 +63,7 @@ export function SearchModal({
           <ThemedText style={styles.headerTitle}>{title}</ThemedText>
         </View>
 
-        <View style={styles.dashLine} />
+        <View style={commonStyles.dashLine} />
 
         <View style={styles.searchSection}>
           <TextInput
@@ -76,7 +77,7 @@ export function SearchModal({
           {loading && <Spinner />}
         </View>
 
-        <View style={styles.dashLine} />
+        <View style={commonStyles.dashLine} />
 
         <FlatList
           data={results}
@@ -138,7 +139,6 @@ const styles = StyleSheet.create({
     borderColor: "#000000",
   },
   headerTitle: { fontSize: 20, fontWeight: "bold", color: "#000" },
-  dashLine: { width: "100%", borderBottomWidth: 2, borderStyle: "dashed" },
   searchSection: {
     flexDirection: "row",
     alignItems: "center",
