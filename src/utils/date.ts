@@ -13,10 +13,10 @@ export const getShortDate = (date: Date) => {
   });
 };
 
-export const getTime = (date: Date) => {
-  return date.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
+export const getDayDate = (date: Date) => {
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
   });
-}
-
+};

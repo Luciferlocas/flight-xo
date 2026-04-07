@@ -42,10 +42,6 @@ export default function NavTabs() {
 const styles = StyleSheet.create({
   tabContainer: {
     backgroundColor: "white",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0
   },
   tabWrapper: {
     flexDirection: "row",

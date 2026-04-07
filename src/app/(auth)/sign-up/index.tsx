@@ -157,164 +157,170 @@ export default function SignUpScreen() {
   });
 
   return (
-    <ThemedView style={[styles.container, { height }]}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={require("@/assets/images/airplane-flying-through-clouds.png")}
-          style={styles.image}
-        />
-      </View>
-
-      <View style={styles.dividerContainer}>
-        {[1, 2, 3, 4].map((i) => (
-          <View key={i} style={styles.dashLine} />
-        ))}
-      </View>
-
-      <SafeAreaView style={styles.formContainer} edges={["bottom"]}>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={[styles.input, styles.emailInput, getErrorStyle(error.name)]}
-            placeholder="john doe"
-            value={user.name}
-            onChangeText={(text) => setUser({ ...user, name: text })}
-            placeholderTextColor="#aeaeaeff"
+    <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1 }}>
+      <ThemedView style={[styles.container, { height }]}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("@/assets/images/airplane-flying-through-clouds.png")}
+            style={styles.image}
           />
-          <View style={styles.dashLine} />
+        </View>
 
-          <View style={styles.mobileRow}>
+        <View style={styles.dividerContainer}>
+          {[1, 2, 3, 4].map((i) => (
+            <View key={i} style={styles.dashLine} />
+          ))}
+        </View>
+
+        <View style={styles.formContainer}>
+          <View style={styles.inputWrapper}>
             <TextInput
               style={[
-                styles.mobileInput,
                 styles.input,
-                getErrorStyle(error.mobile),
+                styles.emailInput,
+                getErrorStyle(error.name),
               ]}
-              placeholder="(+91) 9876543210"
-              keyboardType="number-pad"
-              value={user.mobile}
-              onChangeText={(text) => setUser({ ...user, mobile: text })}
+              placeholder="john doe"
+              value={user.name}
+              onChangeText={(text) => setUser({ ...user, name: text })}
               placeholderTextColor="#aeaeaeff"
             />
-            {otp.sent && !otp.verified && (
-              <>
-                <View style={styles.dashLineVertical} />
+            <View style={styles.dashLine} />
+
+            <View style={styles.mobileRow}>
+              <TextInput
+                style={[
+                  styles.mobileInput,
+                  styles.input,
+                  getErrorStyle(error.mobile),
+                ]}
+                placeholder="(+91) 9876543210"
+                keyboardType="number-pad"
+                value={user.mobile}
+                onChangeText={(text) => setUser({ ...user, mobile: text })}
+                placeholderTextColor="#aeaeaeff"
+              />
+              {otp.sent && !otp.verified && (
+                <>
+                  <View style={styles.dashLineVertical} />
+                  <TextInput
+                    style={[styles.otpInput, styles.input]}
+                    placeholder="123456"
+                    keyboardType="number-pad"
+                    maxLength={6}
+                    editable={!otp.isVerifying && !otp.verified}
+                    value={otp.value}
+                    onChangeText={(text) => setOtp({ ...otp, value: text })}
+                    placeholderTextColor="#aeaeaeff"
+                  />
+                </>
+              )}
+              {otp.verified ? (
+                <View style={{ paddingHorizontal: 12 }}>
+                  <CircleCheck size={24} color="#000000" fill="#8ca986ff" />
+                </View>
+              ) : (
+                <>
+                  <View style={styles.dashLineVertical} />
+                  <TouchableOpacity
+                    onPress={handleSendOtp}
+                    disabled={loading.sendOtp || otp.disabled}
+                    style={[
+                      styles.verifyButton,
+                      otp.disabled &&
+                        !loading.sendOtp && { backgroundColor: "#ccc" },
+                    ]}
+                  >
+                    {loading.sendOtp ? (
+                      <Spinner color="black" />
+                    ) : (
+                      <ThemedText style={styles.verifyButtonText}>
+                        {!otp.sent ? "Verify" : "Resend"}
+                      </ThemedText>
+                    )}
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+            <View style={styles.dashLine} />
+
+            <TextInput
+              style={[
+                styles.emailInput,
+                styles.input,
+                getErrorStyle(error.email),
+              ]}
+              placeholder="johndoe@email.com"
+              keyboardType="email-address"
+              value={user.email}
+              onChangeText={(text) => setUser({ ...user, email: text })}
+              placeholderTextColor="#aeaeaeff"
+            />
+            <View style={styles.dashLine} />
+
+            <View style={styles.passwordRow}>
+              <View
+                style={[
+                  { paddingHorizontal: 12, flex: 1 },
+                  getErrorStyle(error.password),
+                ]}
+              >
                 <TextInput
-                  style={[styles.otpInput, styles.input]}
-                  placeholder="123456"
-                  keyboardType="number-pad"
-                  maxLength={6}
-                  editable={!otp.isVerifying && !otp.verified}
-                  value={otp.value}
-                  onChangeText={(text) => setOtp({ ...otp, value: text })}
+                  style={styles.input}
+                  secureTextEntry
+                  placeholder="password"
+                  value={user.password}
+                  onChangeText={(text) => setUser({ ...user, password: text })}
                   placeholderTextColor="#aeaeaeff"
                 />
-              </>
-            )}
-            {otp.verified ? (
-              <View style={{ paddingHorizontal: 12 }}>
-                <CircleCheck size={24} color="#000000" fill="#8ca986ff" />
               </View>
-            ) : (
-              <>
-                <View style={styles.dashLineVertical} />
-                <TouchableOpacity
-                  onPress={handleSendOtp}
-                  disabled={loading.sendOtp || otp.disabled}
-                  style={[
-                    styles.verifyButton,
-                    otp.disabled &&
-                    !loading.sendOtp && { backgroundColor: "#ccc" },
-                  ]}
-                >
-                  {loading.sendOtp ? (
-                    <Spinner color="black" />
-                  ) : (
-                    <ThemedText style={styles.verifyButtonText}>
-                      {!otp.sent ? "Verify" : "Resend"}
-                    </ThemedText>
-                  )}
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-          <View style={styles.dashLine} />
-
-          <TextInput
-            style={[
-              styles.emailInput,
-              styles.input,
-              getErrorStyle(error.email),
-            ]}
-            placeholder="johndoe@email.com"
-            keyboardType="email-address"
-            value={user.email}
-            onChangeText={(text) => setUser({ ...user, email: text })}
-            placeholderTextColor="#aeaeaeff"
-          />
-          <View style={styles.dashLine} />
-
-          <View style={styles.passwordRow}>
-            <View
-              style={[
-                { paddingHorizontal: 12, flex: 1 },
-                getErrorStyle(error.password),
-              ]}
-            >
-              <TextInput
-                style={styles.input}
-                secureTextEntry
-                placeholder="password"
-                value={user.password}
-                onChangeText={(text) => setUser({ ...user, password: text })}
-                placeholderTextColor="#aeaeaeff"
-              />
+              <View style={styles.dashLineVertical} />
+              <View
+                style={[
+                  { paddingHorizontal: 12, flex: 1 },
+                  getErrorStyle(error.confirmPassword),
+                ]}
+              >
+                <TextInput
+                  style={styles.input}
+                  secureTextEntry
+                  value={user.confirmPassword}
+                  onChangeText={(text) =>
+                    setUser({ ...user, confirmPassword: text })
+                  }
+                  placeholder="confirm password"
+                  placeholderTextColor="#aeaeaeff"
+                />
+              </View>
             </View>
-            <View style={styles.dashLineVertical} />
-            <View
-              style={[
-                { paddingHorizontal: 12, flex: 1 },
-                getErrorStyle(error.confirmPassword),
-              ]}
-            >
-              <TextInput
-                style={styles.input}
-                secureTextEntry
-                value={user.confirmPassword}
-                onChangeText={(text) =>
-                  setUser({ ...user, confirmPassword: text })
-                }
-                placeholder="confirm password"
-                placeholderTextColor="#aeaeaeff"
-              />
-            </View>
+            <View style={styles.dashLine} />
           </View>
-          <View style={styles.dashLine} />
-        </View>
 
-        <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.loginButton} onPress={handleSignUp}>
-            {loading.signUp ? (
-              <Spinner color="black" />
-            ) : (
-              <>
-                <Plane size={20} color="#000" style={styles.buttonIcon} />
-                <ThemedText style={styles.loginText}>Sign Up</ThemedText>
-              </>
-            )}
-          </TouchableOpacity>
-        </View>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity style={styles.loginButton} onPress={handleSignUp}>
+              {loading.signUp ? (
+                <Spinner color="black" />
+              ) : (
+                <>
+                  <Plane size={20} color="#000" style={styles.buttonIcon} />
+                  <ThemedText style={styles.loginText}>Sign Up</ThemedText>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.bottomGraphicContainer}>
-          <View style={styles.dashedCircle} />
-          <ThemedText style={styles.signUpText}>
-            Already have an account?{" "}
-            <Link href="/login" replace asChild>
-              <ThemedText style={styles.signUpLink}>Login</ThemedText>
-            </Link>
-          </ThemedText>
+          <View style={styles.bottomGraphicContainer}>
+            <View style={styles.dashedCircle} />
+            <ThemedText style={styles.signUpText}>
+              Already have an account?{" "}
+              <Link href="/login" replace asChild>
+                <ThemedText style={styles.signUpLink}>Login</ThemedText>
+              </Link>
+            </ThemedText>
+          </View>
         </View>
-      </SafeAreaView>
-    </ThemedView>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 

@@ -63,86 +63,85 @@ export default function LoginScreen() {
   });
 
   return (
-    <ThemedView style={[styles.container, { height }]}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={require("@/assets/images/airplane-flying-through-clouds.png")}
-          style={styles.image}
-        />
-      </View>
-
-      <View style={styles.dividerContainer}>
-        {[1, 2, 3, 4].map((i) => (
-          <View key={i} style={styles.dashLine} />
-        ))}
-      </View>
-
-      <SafeAreaView style={styles.formContainer} edges={["bottom"]}>
-        <View style={styles.inputWrapper}>
-          <View style={[styles.row, getErrorStyle(error.email)]}>
-            <TextInput
-              style={[
-                styles.input,
-                getErrorStyle(error.email),
-              ]}
-              placeholder="johndoe@email.com"
-              value={email}
-              onChangeText={setEmail}
-              placeholderTextColor="#aeaeaeff"
-            />
-          </View>
-          <View style={styles.dashLine} />
-
-          <View style={[styles.row, getErrorStyle(error.password)]}>
-            <TextInput
-              style={[styles.input, { flex: 1 }]}
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-              placeholder="password"
-              placeholderTextColor="#aeaeaeff"
-            />
-            <Key size={20} color="#000" strokeWidth={3} />
-          </View>
-          <View style={styles.dashLine} />
+    <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1 }}>
+      <ThemedView style={[styles.container, { height }]}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("@/assets/images/airplane-flying-through-clouds.png")}
+            style={styles.image}
+          />
         </View>
 
-        <View style={styles.buttonRow}>
-          <TouchableOpacity
-            disabled={loading}
-            style={styles.loginButton}
-            onPress={handleLogin}
-          >
-            {loading ? (
-              <Spinner />
-            ) : (
-              <>
-                <Plane size={20} color="#000" style={styles.buttonIcon} />
-                <ThemedText style={styles.loginText}>Login</ThemedText>
-              </>
-            )}
+        <View style={styles.dividerContainer}>
+          {[1, 2, 3, 4].map((i) => (
+            <View key={i} style={styles.dashLine} />
+          ))}
+        </View>
+
+        <View style={styles.formContainer}>
+          <View style={styles.inputWrapper}>
+            <View style={[styles.row, getErrorStyle(error.email)]}>
+              <TextInput
+                style={[styles.input, getErrorStyle(error.email)]}
+                placeholder="johndoe@email.com"
+                value={email}
+                onChangeText={setEmail}
+                placeholderTextColor="#aeaeaeff"
+              />
+            </View>
+            <View style={styles.dashLine} />
+
+            <View style={[styles.row, getErrorStyle(error.password)]}>
+              <TextInput
+                style={[styles.input, { flex: 1 }]}
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+                placeholder="password"
+                placeholderTextColor="#aeaeaeff"
+              />
+              <Key size={20} color="#000" strokeWidth={3} />
+            </View>
+            <View style={styles.dashLine} />
+          </View>
+
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              disabled={loading}
+              style={styles.loginButton}
+              onPress={handleLogin}
+            >
+              {loading ? (
+                <Spinner />
+              ) : (
+                <>
+                  <Plane size={20} color="#000" style={styles.buttonIcon} />
+                  <ThemedText style={styles.loginText}>Login</ThemedText>
+                </>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.biometricButton}>
+              <ScanFace size={24} color="#000" />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity style={styles.forgotBtn}>
+            <ThemedText style={styles.forgotText}>Forgot Password?</ThemedText>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.biometricButton}>
-            <ScanFace size={24} color="#000" />
-          </TouchableOpacity>
+          <View style={styles.bottomGraphicContainer}>
+            <View style={styles.dashedCircle} />
+            <ThemedText style={styles.signUpText}>
+              New to Flight-XO?{" "}
+              <Link href="/sign-up" asChild>
+                <ThemedText style={styles.signUpLink}>Sign Up</ThemedText>
+              </Link>
+            </ThemedText>
+          </View>
         </View>
-
-        <TouchableOpacity style={styles.forgotBtn}>
-          <ThemedText style={styles.forgotText}>Forgot Password?</ThemedText>
-        </TouchableOpacity>
-
-        <View style={styles.bottomGraphicContainer}>
-          <View style={styles.dashedCircle} />
-          <ThemedText style={styles.signUpText}>
-            New to Flight-XO?{" "}
-            <Link href="/sign-up" asChild>
-              <ThemedText style={styles.signUpLink}>Sign Up</ThemedText>
-            </Link>
-          </ThemedText>
-        </View>
-      </SafeAreaView>
-    </ThemedView>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 

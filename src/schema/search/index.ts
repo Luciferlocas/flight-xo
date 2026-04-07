@@ -83,6 +83,7 @@ export const FlightSearchRequestSchema = z.object({
   adults: z.number(),
   children: z.number(),
   infants: z.number(),
+  deviceId: z.string(),
 });
 
 const DiscountSchema = z.object({
@@ -144,6 +145,7 @@ const HopSchema = z.object({
   duration: z.string(),
   class: z.string(),
   additional_info: z.record(z.string(), z.any()),
+  layover: z.string().optional(),
   aircraftType: z.string(),
   serviceType: z.string(),
   aircraftTypeSuffix: z.string(),
@@ -188,41 +190,95 @@ export const FlightResponseSchema = z.object({
   timestamp: z.string(),
   length: z.number(),
   flights: z.array(FlightItemSchema),
-  meta: z.object({
-    price: z.object({ min: z.number(), max: z.number() }),
-    duration: z.object({ min: z.string(), max: z.string() }),
-    stops: z.object({ min: z.number(), max: z.number() }),
-    layover: z.object({ min: z.string(), max: z.string() }),
-    airlines: z.array(z.string()),
-    airlineNames: z.record(z.string(), z.string()),
-    airports: z.object({
-      origin: z.array(z.string()),
-      destination: z.array(z.string()),
-    }),
-    airportNames: z.record(z.string(), z.string()),
-    departure: z.object({
-      timezone: z.string(),
-      min_datetime: z.string(),
-      max_datetime: z.string(),
-      min_timestamp: z.number(),
-      max_timestamp: z.number(),
-    }),
-    arrival: z.object({
-      timezone: z.string(),
-      min_datetime: z.string(),
-      max_datetime: z.string(),
-      min_timestamp: z.number(),
-      max_timestamp: z.number(),
-    }),
-    airline_filter: z.record(z.string(), z.object({
-      cnt: z.number(),
-      stp: z.number()
-    })),
-    provider_order: z.array(z.string()),
-    card_info: z.array(z.object({
-      id: z.number(),
-      text: z.string(),
-      flights_length: z.number()
-    })).optional()
-  }).passthrough(),
+  meta: z
+    .object({
+      price: z.object({ min: z.number(), max: z.number() }),
+      duration: z.object({ min: z.string(), max: z.string() }),
+      stops: z.object({ min: z.number(), max: z.number() }),
+      layover: z.object({ min: z.string(), max: z.string() }),
+      airlines: z.array(z.string()),
+      airlineNames: z.record(z.string(), z.string()),
+      airports: z.object({
+        origin: z.array(z.string()),
+        destination: z.array(z.string()),
+      }),
+      airportNames: z.record(z.string(), z.string()),
+      departure: z.object({
+        timezone: z.string(),
+        min_datetime: z.string(),
+        max_datetime: z.string(),
+        min_timestamp: z.number(),
+        max_timestamp: z.number(),
+      }),
+      arrival: z.object({
+        timezone: z.string(),
+        min_datetime: z.string(),
+        max_datetime: z.string(),
+        min_timestamp: z.number(),
+        max_timestamp: z.number(),
+      }),
+      airline_filter: z.record(
+        z.string(),
+        z.object({
+          cnt: z.number(),
+          stp: z.number(),
+        })
+      ),
+      provider_order: z.array(z.string()),
+      card_info: z
+        .array(
+          z.object({
+            id: z.number(),
+            text: z.string(),
+            flights_length: z.number(),
+          })
+        )
+        .optional(),
+    })
+    .passthrough(),
+  requestid: z.string(),
+});
+
+export const FlightFareRequestSchema = z.object({
+  id: z.string(),
+  requestId: z.string(),
+});
+
+const ServiceEnum = z.enum([
+  "CHECKIN_BAGGAGE",
+  "HAND_BAGGAGE",
+  "SEAT",
+  "MEAL",
+  "MODIFICATION",
+  "CANCELLATION",
+]);
+
+export const FlightFareSchema = z.object({
+  totalbase: z.number(),
+  totaltax: z.number(),
+  price: z.number(),
+  fare_id: z.number(),
+  fare_heading: z.string(),
+  fare_sub_heading: z.string(),
+  fare_name: z.string(),
+  display_price: z.number(),
+  price_id: z.string(),
+  flight_id: z.string(),
+  cabin_class: z.string().length(1),
+  available_services: z.array(ServiceEnum),
+});
+
+export const FareServicesSchema = z.object({
+  service_id: ServiceEnum,
+  row_display_text: z.string(),
+  available_col_display_text: z.string(),
+  available_col_display_text_by_fare_product: z.record(z.string(), z.string()),
+  display_image_by_fare_product: z.record(z.string(), z.boolean()),
+  unavailable_col_display_text: z.string(),
+  fare_service_icon: z.string(),
+});
+
+export const FlightFareResponseSchema = z.object({
+  fares: z.array(FlightFareSchema),
+  fare_services: z.array(FareServicesSchema),
 });

@@ -25,4 +25,8 @@ export const commonStyles = StyleSheet.create({
     borderLeftWidth: 2,
     borderStyle: "dashed",
   },
+  flexRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
 });

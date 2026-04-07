@@ -126,6 +126,124 @@ export function PassengerInput() {
   );
 }
 
+export function PassengerCounter({
+  passengers,
+  setPassengers,
+}: {
+  passengers: { adults: number; children: number; infants: number };
+  setPassengers: (passengers: {
+    adults: number;
+    children: number;
+    infants: number;
+  }) => void;
+}) {
+  return (
+    <>
+      <View style={styles.counterContainer}>
+        <View style={styles.counterRow}>
+          <ThemedText style={styles.counterText} allowFontScaling={false}>
+            {passengers.adults} Adults
+          </ThemedText>
+          <View style={commonStyles.dashLineVertical} />
+          <View style={styles.counterButtons}>
+            <TouchableOpacity
+              style={[styles.counterButton, styles.plusButton]}
+              disabled={passengers.adults === 6}
+              onPress={() =>
+                setPassengers({
+                  ...passengers,
+                  adults: passengers.adults + 1,
+                })
+              }
+            >
+              <ThemedText style={styles.counterButtonText}>+</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.counterButton, styles.minusButton]}
+              disabled={passengers.adults === 1}
+              onPress={() =>
+                setPassengers({
+                  ...passengers,
+                  adults: passengers.adults - 1,
+                })
+              }
+            >
+              <ThemedText style={styles.counterButtonText}>-</ThemedText>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={commonStyles.dashLineVertical} />
+        <View style={styles.counterRow}>
+          <ThemedText style={styles.counterText} allowFontScaling={false}>
+            {passengers.children} Child
+          </ThemedText>
+          <View style={commonStyles.dashLineVertical} />
+          <View style={styles.counterButtons}>
+            <TouchableOpacity
+              style={[styles.counterButton, styles.plusButton]}
+              disabled={passengers.children === 6}
+              onPress={() =>
+                setPassengers({
+                  ...passengers,
+                  children: passengers.children + 1,
+                })
+              }
+            >
+              <ThemedText style={styles.counterButtonText}>+</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.counterButton, styles.minusButton]}
+              disabled={passengers.children === 0}
+              onPress={() =>
+                setPassengers({
+                  ...passengers,
+                  children: passengers.children - 1,
+                })
+              }
+            >
+              <ThemedText style={styles.counterButtonText}>-</ThemedText>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={commonStyles.dashLineVertical} />
+        <View style={styles.counterRow}>
+          <ThemedText style={styles.counterText} allowFontScaling={false}>
+            {passengers.infants} Infants
+          </ThemedText>
+          <View style={commonStyles.dashLineVertical} />
+          <View style={styles.counterButtons}>
+            <TouchableOpacity
+              style={[styles.counterButton, styles.plusButton]}
+              disabled={passengers.infants === 2}
+              onPress={() =>
+                setPassengers({
+                  ...passengers,
+                  infants: passengers.infants + 1,
+                })
+              }
+            >
+              <ThemedText style={styles.counterButtonText}>+</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.counterButton, styles.minusButton]}
+              disabled={passengers.infants === 0}
+              onPress={() =>
+                setPassengers({
+                  ...passengers,
+                  infants: passengers.infants - 1,
+                })
+              }
+            >
+              <ThemedText style={styles.counterButtonText}>-</ThemedText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+      <View style={commonStyles.dashLine} />
+    </>
+  );
+}
+
 const styles = StyleSheet.create({
   counterContainer: {
     flexDirection: "row",
@@ -142,7 +260,7 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   counterText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
     color: "#000",
     paddingVertical: 24,
