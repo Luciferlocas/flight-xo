@@ -1,6 +1,15 @@
 import { useSearch } from "@/store/search";
 import { getShortDate } from "@/utils/date";
-import { ArrowDownUp, Ban, CalendarDays, Plane, PlaneLanding, PlaneTakeoff, Ticket, UsersRound } from "lucide-react-native";
+import {
+  ArrowDownUp,
+  Ban,
+  CalendarDays,
+  Plane,
+  PlaneLanding,
+  PlaneTakeoff,
+  Ticket,
+  UsersRound,
+} from "lucide-react-native";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { ThemedText } from "../themed-text";
 import { getClassName } from "@/utils/flight";
@@ -23,27 +32,45 @@ export const FlightFilters = () => {
     },
     {
       icon: <ArrowDownUp size={16} />,
-      text: filter.sortBy.charAt(0).toUpperCase() + filter.sortBy.slice(1)
+      text: filter.sortBy.charAt(0).toUpperCase() + filter.sortBy.slice(1),
     },
-    ...(filter.departureTime ? [{
-      icon: <PlaneTakeoff size={16} />,
-      text: filter.departureTime
-    }] : []),
-    ...(filter.arrivalTime ? [{
-      icon: <PlaneLanding size={16} />,
-      text: filter.arrivalTime
-    }] : []),
-    ...(filter.stops ? [{
-      icon: <Ban size={16} />,
-      text: filter.stops
-    }] : []),
-    ...(filter.airlines.length > 0 ? [{
-      icon: <Plane size={16} />,
-      text: filter.airlines.join(", ")
-    }] : [{
-      icon: <Plane size={16} />,
-      text: "All Airlines"
-    }]),
+    ...(filter.departureTime
+      ? [
+          {
+            icon: <PlaneTakeoff size={16} />,
+            text: filter.departureTime,
+          },
+        ]
+      : []),
+    ...(filter.arrivalTime
+      ? [
+          {
+            icon: <PlaneLanding size={16} />,
+            text: filter.arrivalTime,
+          },
+        ]
+      : []),
+    ...(filter.stops
+      ? [
+          {
+            icon: <Ban size={16} />,
+            text: filter.stops,
+          },
+        ]
+      : []),
+    ...(filter.airlines.length > 0
+      ? [
+          {
+            icon: <Plane size={16} />,
+            text: filter.airlines.join(", "),
+          },
+        ]
+      : [
+          {
+            icon: <Plane size={16} />,
+            text: "All Airlines",
+          },
+        ]),
   ];
 
   return (
@@ -51,10 +78,7 @@ export const FlightFilters = () => {
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.filters}>
           {filters.map((filter, index) => (
-            <View
-              key={index}
-              style={styles.filterItem}
-            >
+            <View key={index} style={styles.filterItem}>
               {filter.icon}
               <ThemedText style={styles.filterText}>{filter.text}</ThemedText>
             </View>

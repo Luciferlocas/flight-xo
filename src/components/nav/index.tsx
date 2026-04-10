@@ -1,4 +1,4 @@
-import { CircleUserRound, Heart, Search, Tickets } from "lucide-react-native";
+import { CircleUserRound, Map, Search, Tickets } from "lucide-react-native";
 import { RelativePathString, usePathname, useRouter } from "expo-router";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -11,7 +11,7 @@ export default function NavTabs() {
 
   const tabs = [
     { name: "Search", icon: Search, route: "/" },
-    { name: "Favorites", icon: Heart, route: "/favorites" },
+    { name: "Track", icon: Map, route: "/track" },
     { name: "Tickets", icon: Tickets, route: "/tickets" },
     { name: "Profile", icon: CircleUserRound, route: "/profile" },
   ];
