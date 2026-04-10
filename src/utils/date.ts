@@ -20,3 +20,16 @@ export const getDayDate = (date: Date) => {
     day: "numeric",
   });
 };
+
+export const getDateWithTime = (date: string) => {
+  const dateObj = new Date(date);
+  const result = `${dateObj.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+  })}, ${dateObj.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  })}`;
+  return result;
+};

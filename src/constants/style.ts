@@ -1,6 +1,4 @@
-import { Dimensions, StyleSheet } from "react-native";
-
-const { width } = Dimensions.get("window");
+import { StyleSheet } from "react-native";
 
 export const commonStyles = StyleSheet.create({
   inputRow: {
@@ -16,7 +14,7 @@ export const commonStyles = StyleSheet.create({
     flex: 1,
   },
   dashLine: {
-    width: width,
+    width: "100%",
     borderBottomWidth: 2,
     borderStyle: "dashed",
   },
