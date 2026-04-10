@@ -269,10 +269,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   minusButton: {
-    backgroundColor: "#eec1b5ff",
+    backgroundColor: "#ff827bff",
   },
   plusButton: {
-    backgroundColor: "#aae2a0ff",
+    backgroundColor: "#22c55e",
     borderBottomWidth: 2,
     borderStyle: "dashed",
   },

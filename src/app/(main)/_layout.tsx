@@ -5,14 +5,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MainLayout() {
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={{ flex: 1 }} edges={["top", "bottom"]}>
-        <View style={styles.content}>
-          <Slot />
-        </View>
-      </SafeAreaView>
+    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+      <View style={styles.content}>
+        <Slot />
+      </View>
       <NavTabs />
-    </View>
+    </SafeAreaView>
   );
 }
 

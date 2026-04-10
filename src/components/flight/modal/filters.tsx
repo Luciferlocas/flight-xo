@@ -20,8 +20,26 @@ import { Spinner } from "@/components/ui/spinner";
 import { FlightService } from "@/service";
 import { getFormattedDate } from "@/utils/date";
 
-export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
-  const { filter, passengers, flights, from, to, date, tripType, deviceId, setFilter, setPassengers, setFlights } = useSearch();
+export const FilterModal = ({
+  visible,
+  onClose,
+}: {
+  visible: boolean;
+  onClose: () => void;
+}) => {
+  const {
+    filter,
+    passengers,
+    flights,
+    from,
+    to,
+    date,
+    tripType,
+    deviceId,
+    setFilter,
+    setPassengers,
+    setFlights,
+  } = useSearch();
   const [localFilter, setLocalFilter] = useState(filter);
   const [localPassengers, setLocalPassengers] = useState(passengers);
   const [loading, setLoading] = useState(false);
@@ -35,7 +53,9 @@ export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: (
         origin: from.iata,
         destination: to.iata,
         departureDate: getFormattedDate(date.departure),
-        ...(tripType === "roundTrip" && { returnDate: getFormattedDate(date.return) }),
+        ...(tripType === "roundTrip" && {
+          returnDate: getFormattedDate(date.return),
+        }),
         adults: localPassengers.adults,
         children: localPassengers.children,
         infants: localPassengers.infants,
@@ -52,7 +72,14 @@ export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: (
   };
 
   const handleReset = () => {
-    setLocalFilter({ sortBy: "price", stops: "", departureTime: "", arrivalTime: "", airlines: [], flightClass: "E" });
+    setLocalFilter({
+      sortBy: "price",
+      stops: "",
+      departureTime: "",
+      arrivalTime: "",
+      airlines: [],
+      flightClass: "E",
+    });
     setLocalPassengers({ adults: 1, children: 0, infants: 0 });
   };
 
@@ -65,7 +92,13 @@ export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: (
     });
   };
 
-  const FilterGroup = ({ title, options, value, field, formatLabel = (s: string) => s }: any) => (
+  const FilterGroup = ({
+    title,
+    options,
+    value,
+    field,
+    formatLabel = (s: string) => s,
+  }: any) => (
     <View style={styles.filterSection}>
       <ThemedText style={styles.filterTitle}>{title}</ThemedText>
       <View style={commonStyles.dashLine} />
@@ -76,16 +109,26 @@ export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: (
               style={[styles.button, value === item && styles.selected]}
               onPress={() => setLocalFilter({ ...localFilter, [field]: item })}
             >
-              <ThemedText style={styles.filterLabel}>{formatLabel(item)}</ThemedText>
+              <ThemedText style={styles.filterLabel}>
+                {formatLabel(item)}
+              </ThemedText>
             </Pressable>
-            {index !== options.length - 1 && <View style={commonStyles.dashLineVertical} />}
+            {index !== options.length - 1 && (
+              <View style={commonStyles.dashLineVertical} />
+            )}
           </Fragment>
         ))}
       </View>
     </View>
   );
 
-  const TimeGroup = ({ title, field }: { title: string, field: 'departureTime' | 'arrivalTime' }) => {
+  const TimeGroup = ({
+    title,
+    field,
+  }: {
+    title: string;
+    field: "departureTime" | "arrivalTime";
+  }) => {
     const slots = [
       { label: "Morning", range: "06:00 - 12:00" },
       { label: "Afternoon", range: "12:00 - 18:00" },
@@ -96,11 +139,9 @@ export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: (
     const handleSelectTime = (time: string) => {
       setLocalFilter({
         ...localFilter,
-        [field]: localFilter[field] === time
-          ? ""
-          : time,
+        [field]: localFilter[field] === time ? "" : time,
       });
-    }
+    };
 
     return (
       <View style={styles.filterSection}>
@@ -112,10 +153,16 @@ export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: (
               {slots.slice(startIndex, startIndex + 2).map((slot, idx) => (
                 <Fragment key={slot.label}>
                   <Pressable
-                    style={[styles.button, { paddingVertical: 12 }, localFilter[field] === slot.label && styles.selected]}
+                    style={[
+                      styles.button,
+                      { paddingVertical: 12 },
+                      localFilter[field] === slot.label && styles.selected,
+                    ]}
                     onPress={() => handleSelectTime(slot.label)}
                   >
-                    <ThemedText style={styles.filterLabel}>{slot.label}</ThemedText>
+                    <ThemedText style={styles.filterLabel}>
+                      {slot.label}
+                    </ThemedText>
                     <ThemedText style={styles.time}>{slot.range}</ThemedText>
                   </Pressable>
                   {idx === 0 && <View style={commonStyles.dashLineVertical} />}
@@ -135,7 +182,13 @@ export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: (
     <Modal animationType="slide" transparent={false} visible={visible}>
       <SafeAreaView style={styles.modalContainer}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => { setLocalFilter(filter); onClose(); }}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => {
+              setLocalFilter(filter);
+              onClose();
+            }}
+          >
             <X size={28} color="#000" />
           </TouchableOpacity>
           <ThemedText style={styles.headerTitle}>Filters</ThemedText>
@@ -155,10 +208,18 @@ export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: (
           <View style={styles.filterSection}>
             <ThemedText style={styles.filterTitle}>Passengers</ThemedText>
             <View style={commonStyles.dashLine} />
-            <PassengerCounter passengers={localPassengers} setPassengers={setLocalPassengers} />
+            <PassengerCounter
+              passengers={localPassengers}
+              setPassengers={setLocalPassengers}
+            />
           </View>
 
-          <FilterGroup title="Stops" field="stops" value={localFilter.stops} options={["Non stop", "1 Stop", "2+ Stops"]} />
+          <FilterGroup
+            title="Stops"
+            field="stops"
+            value={localFilter.stops}
+            options={["Non stop", "1 Stop", "2+ Stops"]}
+          />
           <View style={commonStyles.dashLine} />
           <TimeGroup title="Departure Time" field="departureTime" />
           <View style={commonStyles.dashLine} />
@@ -169,7 +230,9 @@ export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: (
             field="flightClass"
             value={localFilter.flightClass}
             options={["E", "P", "B"]}
-            formatLabel={(s: string) => s === "E" ? "Economy" : s === "P" ? "Premium Eco" : "Business"}
+            formatLabel={(s: string) =>
+              s === "E" ? "Economy" : s === "P" ? "Premium Eco" : "Business"
+            }
           />
           <View style={commonStyles.dashLine} />
           <View style={styles.filterSection}>
@@ -178,18 +241,32 @@ export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: (
             {airlines.map((airline, index) => (
               <Fragment key={airline.name}>
                 <Pressable
-                  style={[styles.button, styles.airline, localFilter.airlines.includes(airline.name) && styles.selected]}
+                  style={[
+                    styles.button,
+                    styles.airline,
+                    localFilter.airlines.includes(airline.name) &&
+                      styles.selected,
+                  ]}
                   onPress={() => handleSelectAirline(airline.name)}
                 >
                   <View style={commonStyles.flexRow}>
                     <View style={styles.imageContainer}>
-                      <Image style={styles.airlineLogo} source={{ uri: getAirlineLogo(airline.code) }} />
+                      <Image
+                        style={styles.airlineLogo}
+                        source={{ uri: getAirlineLogo(airline.code) }}
+                      />
                     </View>
-                    <ThemedText style={styles.filterLabel}>{airline.name}</ThemedText>
+                    <ThemedText style={styles.filterLabel}>
+                      {airline.name}
+                    </ThemedText>
                   </View>
-                  <ThemedText style={styles.airlinePrice}>₹ {airline.price}</ThemedText>
+                  <ThemedText style={styles.airlinePrice}>
+                    ₹ {airline.price}
+                  </ThemedText>
                 </Pressable>
-                {index !== airlines.length - 1 && <View style={commonStyles.dashLine} />}
+                {index !== airlines.length - 1 && (
+                  <View style={commonStyles.dashLine} />
+                )}
               </Fragment>
             ))}
           </View>
@@ -202,8 +279,15 @@ export const FilterModal = ({ visible, onClose }: { visible: boolean; onClose: (
             <ThemedText style={styles.buttonText}>Reset</ThemedText>
           </TouchableOpacity>
           <View style={commonStyles.dashLineVertical} />
-          <TouchableOpacity style={[styles.button, { backgroundColor: "#FFD700" }]} onPress={handleApply}>
-            {loading ? <Spinner /> : <ThemedText style={styles.buttonText}>Apply</ThemedText>}
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "#FFD700" }]}
+            onPress={handleApply}
+          >
+            {loading ? (
+              <Spinner />
+            ) : (
+              <ThemedText style={styles.buttonText}>Apply</ThemedText>
+            )}
           </TouchableOpacity>
         </View>
       </SafeAreaView>

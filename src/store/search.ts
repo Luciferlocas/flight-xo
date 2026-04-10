@@ -47,7 +47,7 @@ interface SearchState {
   setFlightClass: (flightClass: string) => void;
   setFlights: (flights: FlightResponse) => void;
   setFilter: (filter: {
-    sortBy: string
+    sortBy: string;
     stops: string;
     departureTime: string;
     arrivalTime: string;
@@ -146,8 +146,8 @@ export const useSearch = () => {
       arrivalTime: "",
       airlines: [],
       flightClass: "E",
-    })
-  }
+    });
+  };
 
   return {
     tripType,

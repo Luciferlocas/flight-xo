@@ -89,8 +89,7 @@ export const FlightDetailsCard = ({
                   style={[commonStyles.dashLine, { borderColor: "#FFD700" }]}
                 />
                 <ThemedText style={styles.layover}>
-                  Change & layover of {nextHop.layover} at{" "}
-                  {nextHop.origin_city}
+                  Change & layover of {nextHop.layover} at {nextHop.origin_city}
                 </ThemedText>
                 <View
                   style={[commonStyles.dashLine, { borderColor: "#FFD700" }]}

@@ -153,7 +153,7 @@ export default function SignUpScreen() {
   };
 
   const getErrorStyle = (isError: boolean) => ({
-    backgroundColor: isError ? "#f5bcbcff" : "transparent",
+    backgroundColor: isError ? "#ff827bff" : "transparent",
   });
 
   return (

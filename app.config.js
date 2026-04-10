@@ -1,4 +1,6 @@
-{
+import "dotenv/config";
+
+export default {
   "expo": {
     "name": "flight-xo",
     "slug": "flight-xo",
@@ -8,18 +10,24 @@
     "scheme": "flightxo",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/images/favicon.png"
+      "icon": "./assets/images/favicon.png",
+      "supportsTablet": true
     },
     "android": {
+      "package": "com.luciferlocas.flightxo",
+      "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "backgroundColor": "#EAEAE2",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false,
-      "softwareKeyboardLayoutMode": "pan",
-      "package": "com.luciferlocas.flightxo"
+      "config": {
+        "googleMaps": {
+          "apiKey": process.env.MAPS_API_KEY
+        }
+      }
     },
     "web": {
       "output": "static",
@@ -36,6 +44,12 @@
             "imageWidth": 76
           }
         }
+      ],
+      [
+        "react-native-maps",
+        {
+          "androidGoogleMapsApiKey": process.env.MAPS_API_KEY
+        }
       ]
     ],
     "experiments": {
@@ -49,4 +63,4 @@
       }
     }
   }
-}
+};
