@@ -161,7 +161,7 @@ export default function SignUpScreen() {
       <ThemedView style={[styles.container, { height }]}>
         <View style={styles.imageContainer}>
           <Image
-            source={require("@/assets/images/airplane-flying-through-clouds.png")}
+            source={require("@/assets/images/airplane-in-cloud.png")}
             style={styles.image}
           />
         </View>
@@ -228,7 +228,7 @@ export default function SignUpScreen() {
                     style={[
                       styles.verifyButton,
                       otp.disabled &&
-                        !loading.sendOtp && { backgroundColor: "#ccc" },
+                      !loading.sendOtp && { backgroundColor: "#ccc" },
                     ]}
                   >
                     {loading.sendOtp ? (

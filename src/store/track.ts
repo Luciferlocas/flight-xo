@@ -1,3 +1,4 @@
+import { TrackFlightResponse } from "@/schema/track/index.types";
 import { create } from "zustand";
 
 interface TrackState {
@@ -7,7 +8,9 @@ interface TrackState {
     flightNumber: string;
     limit: string | null;
   };
+  flightData: TrackFlightResponse | null;
   setFlightNumber: (flightNumber: TrackState["flightNumber"]) => void;
+  setFlightData: (flightData: TrackFlightResponse | null) => void;
 }
 
 export const useTrackStore = create<TrackState>((set) => ({
@@ -17,12 +20,16 @@ export const useTrackStore = create<TrackState>((set) => ({
     flightNumber: "",
     limit: null,
   },
+  flightData: null,
   setFlightNumber: (flightNumber: TrackState["flightNumber"]) =>
     set({ flightNumber }),
+  setFlightData: (flightData: TrackFlightResponse | null) =>
+    set({ flightData }),
 }));
 
 export const useTrack = () => {
-  const { flightNumber, setFlightNumber } = useTrackStore();
+  const { flightNumber, flightData, setFlightNumber, setFlightData } =
+    useTrackStore();
 
-  return { flightNumber, setFlightNumber };
+  return { flightNumber, flightData, setFlightNumber, setFlightData };
 };

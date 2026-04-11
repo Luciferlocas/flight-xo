@@ -1,192 +1,216 @@
-import { TextInput, View, StyleSheet, Pressable, FlatList } from "react-native";
-import { Spinner } from "../ui/spinner";
-import { useEffect, useState } from "react";
 import { commonStyles } from "@/constants/style";
-import { ThemedText } from "../themed-text";
-import { useDebounce } from "@/hooks/use-debounce";
-import { TrackService } from "@/service";
 import { FlightNumber } from "@/schema/track/index.types";
 import { useTrack } from "@/store";
-import { getShortDate } from "@/utils/date";
+import { ArrowRight, Plane } from "lucide-react-native";
+import { useState } from "react";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ThemedText } from "../themed-text";
+import { Spinner } from "../ui/spinner";
+import { TrackModal } from "./modal";
+import { useRouter } from "expo-router";
+import { TrackService } from "@/service";
 
-export default function SearchFlightCode({ onClose }: { onClose: () => void }) {
-  const [query, setQuery] = useState("");
+export default function SearchFlightCode() {
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<FlightNumber[]>([]);
-  const [hasSearched, setHasSearched] = useState(false);
-  const { setFlightNumber } = useTrack();
+  const [localSelected, setLocalSelected] = useState<FlightNumber | null>(null);
+  const { setFlightData } = useTrack();
+  const router = useRouter();
 
-  const handleSearch = useDebounce(
-    async (val: string) => {
-      if (val.trim().length > 1) {
-        setLoading(true);
-        setHasSearched(true);
-        const response = await TrackService.searchFlightNumber({ query: val });
-        if (response.success && response.data) {
-          setResults(response.data);
-        }
-        setLoading(false);
-      } else {
-        setResults([]);
-        setHasSearched(false);
-      }
-    },
-    500,
-    []
-  );
+  const handleTrack = async () => {
+    if (!localSelected) return;
+    setLoading(true);
+    const source = localSelected.value._source;
 
-  useEffect(() => {
-    handleSearch(query);
-  }, [query]);
-
-  const handleSelect = (flight: FlightNumber) => {
-    const source = flight.value._source;
-
-    setFlightNumber({
+    const payload = {
       flightId: source.flightId,
       airline: source.carrierIata,
       flightNumber: source.flightNumber,
       limit: null,
-    });
+    };
 
-    onClose();
+    try {
+      const res = await TrackService.trackFlight(payload);
+
+      if (res.success && res.data) {
+        setFlightData(res.data);
+        setLoading(false);
+        router.push(`/track/${source.flightId}`);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <View>
-      <View style={styles.searchSection}>
-        <TextInput
-          autoFocus
-          style={styles.searchInput}
-          placeholder="Search flight number (e.g. 6E 399)"
-          value={query}
-          onChangeText={setQuery}
-          placeholderTextColor="#aeaeae"
-          autoCapitalize="characters"
+      <View style={styles.imageContainer}>
+        <Image
+          style={styles.image}
+          source={require("@/assets/images/flight-path.png")}
         />
-        {loading && <Spinner />}
       </View>
 
       <View style={commonStyles.dashLine} />
 
-      {hasSearched && (
-        <FlatList
-          style={styles.listContainer}
-          data={results}
-          renderItem={({ item }) => (
-            <View key={item.value._id}>
-              <Pressable
-                style={styles.resultItem}
-                onPress={() => handleSelect(item)}
-              >
-                <View style={{ flex: 1 }}>
-                  <View
-                    style={[commonStyles.flexRow, { gap: 8, marginBottom: 4 }]}
-                  >
-                    <ThemedText style={styles.name}>
-                      {item.value._source.carrierName}{" "}
-                      {item.value._source.flightNumber}
-                    </ThemedText>
-                    <ThemedText style={styles.status}>
-                      {item.value._source.status.charAt(0) +
-                        item.value._source.status.slice(1).toLowerCase()}
-                    </ThemedText>
-                  </View>
-                  <ThemedText style={styles.date}>
-                    {getShortDate(
-                      new Date(item.value._source.departureDateTime)
-                    )}
-                  </ThemedText>
-                </View>
-                <View style={{ alignItems: "flex-end" }}>
-                  <ThemedText style={styles.ident}>
-                    {item.value._source.carrierIata}
-                    {item.value._source.flightNumber}
-                  </ThemedText>
-                  <ThemedText style={[styles.date, { fontSize: 12 }]}>
-                    {item.value._source.tailNumber || "No Tail"}
-                  </ThemedText>
-                </View>
-              </Pressable>
-              <View style={commonStyles.dashLine} />
+      <TouchableOpacity
+        onPress={() => setOpen(true)}
+        style={styles.searchSection}
+      >
+        {localSelected ? (
+          <View style={styles.place}>
+            <View>
+              <ThemedText style={styles.placeIata}>
+                {localSelected.value._source.carrierIata}
+                {localSelected.value._source.flightNumber}
+              </ThemedText>
+              <ThemedText style={styles.placeCity}>
+                {localSelected.value._source.carrierName}
+              </ThemedText>
             </View>
-          )}
-          keyExtractor={(item) => item.value._id}
-          ListEmptyComponent={
-            !loading ? (
-              <View style={styles.noResult}>
-                <ThemedText style={styles.noResultText}>
-                  No flights found
+            <View>
+              <View style={[commonStyles.flexRow, { gap: 4 }]}>
+                <ThemedText style={styles.placeIata}>
+                  {localSelected.objectLabel.secondaryResultText.primary.first}
+                </ThemedText>
+                <ArrowRight size={14} color="#000" />
+                <ThemedText style={styles.placeIata}>
+                  {
+                    localSelected.objectLabel.secondaryResultText.secondary
+                      .first
+                  }
                 </ThemedText>
               </View>
-            ) : null
-          }
-          keyboardShouldPersistTaps="handled"
-        />
-      )}
+              <ThemedText style={styles.placeCity}>
+                {localSelected.objectLabel.searchSubText}
+              </ThemedText>
+            </View>
+          </View>
+        ) : (
+          <ThemedText style={styles.placeholder}>
+            Search Flight Number or Airline
+          </ThemedText>
+        )}
+      </TouchableOpacity>
+
+      <View style={commonStyles.dashLine} />
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={handleTrack}
+          disabled={loading}
+          style={styles.searchButton}
+        >
+          {loading ? (
+            <Spinner />
+          ) : (
+            <>
+              <Plane size={20} color="#000" style={styles.buttonIcon} />
+              <ThemedText style={styles.searchText}>Track</ThemedText>
+            </>
+          )}
+        </TouchableOpacity>
+      </View>
+
+      <View style={commonStyles.dashLine} />
+
+      <View style={styles.pastTrips}>
+        <ThemedText style={styles.pastTripsBadgeText}>
+          Recently Searched
+        </ThemedText>
+      </View>
+
+      <TrackModal
+        visible={open}
+        onClose={() => setOpen(false)}
+        onSelect={setLocalSelected}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  imageContainer: {
+    height: "48%",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+  },
+  image: {
+    height: "100%",
+    width: "100%",
+    resizeMode: "cover",
+  },
   searchSection: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 12,
-    backgroundColor: "#fff",
   },
-  searchInput: {
+  placeholder: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#000",
+    color: "#aeaeae",
     paddingVertical: 24,
     flex: 1,
   },
-  listContainer: {
-    maxHeight: 300,
-  },
-  resultItem: {
-    padding: 12,
+  place: {
+    paddingVertical: 12,
+    flex: 1,
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
   },
-  noResult: {
-    paddingHorizontal: 12,
+  placeIata: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  placeCity: {
+    fontSize: 12,
+    color: "#3d3d3dff",
+  },
+  buttonContainer: {
     flexDirection: "row",
+    width: "100%",
+    gap: 16,
+    marginVertical: 40,
+    paddingHorizontal: 12,
+  },
+  searchButton: {
+    flex: 2.5,
+    flexDirection: "row",
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 1.5,
+    borderColor: "#000",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 24,
+    backgroundColor: "white",
   },
-  noResultText: {
-    fontSize: 16,
-    fontWeight: "600",
-    fontStyle: "italic",
-    color: "#909090ff",
+  buttonIcon: {
+    marginRight: 8,
   },
-  name: {
-    fontSize: 16,
-    fontWeight: "800",
+  searchText: {
+    fontSize: 18,
+    fontWeight: "bold",
     color: "#000",
   },
-  ident: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000",
-  },
-  status: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#070707ff",
-    backgroundColor: "#ffd900ff",
+  pastTrips: {
+    marginTop: -16,
+    alignSelf: "center",
+    backgroundColor: "white",
+    paddingHorizontal: 16,
     paddingVertical: 2,
-    paddingHorizontal: 6,
-    borderRadius: 6,
+    borderWidth: 1.5,
+    borderColor: "#000000",
+    borderRadius: 50,
   },
-  date: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#464646ff",
+  pastTripsBadgeText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
   },
 });

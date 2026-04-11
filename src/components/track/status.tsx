@@ -9,12 +9,16 @@ export default function FlightStatus({
 }: {
   flightStatus: TrackFlightResponse;
 }) {
+  const isLanded = flightStatus.statusName === "LANDED";
+  const isScheduled = flightStatus.statusName === "SCHEDULED";
+  const isZero = isLanded || isScheduled;
+
   const currentStatus = {
-    speed: flightStatus.positions[0].speedMph,
-    altitude: flightStatus.positions[0].altitudeFt,
+    speed: isZero ? "0" : flightStatus.positions[0].speedMph,
+    altitude: isZero ? "0" : flightStatus.positions[0].altitudeFt,
     vrate: {
-      speed: flightStatus.positions[0].vrateMps,
-      direction:
+      speed: isZero ? "0" : flightStatus.positions[0].vrateMps,
+      direction: isScheduled ? "Scheduled" : isLanded ? "Landed" :
         flightStatus.positions[0].vrateMps > 0
           ? "Ascending"
           : flightStatus.positions[0].vrateMps === 0
@@ -25,38 +29,27 @@ export default function FlightStatus({
 
   return (
     <View style={styles.container}>
-      <View style={commonStyles.flexRow}>
-        <View style={styles.flightNumber}>
+      <View style={[styles.airports, commonStyles.flexRow]}>
+        <View style={styles.airport}>
           <ThemedText style={styles.text}>
-            {flightStatus.carrierFs} {flightStatus.carrierFlightId}
+            {flightStatus.airports.departure.fsCode}
           </ThemedText>
           <ThemedText style={styles.textBold}>
-            {flightStatus.carrierName}
+            {flightStatus.airports.departure.city}
           </ThemedText>
         </View>
-        <View style={commonStyles.dashLineVertical} />
-        <View style={[styles.airports, commonStyles.flexRow]}>
-          <View style={styles.airport}>
-            <ThemedText style={styles.text}>
-              {flightStatus.airports.departure.fsCode}
-            </ThemedText>
-            <ThemedText style={styles.textBold}>
-              {flightStatus.airports.departure.city}
-            </ThemedText>
-          </View>
-          <View style={styles.status}>
-            <ThemedText style={styles.statusText}>
-              {flightStatus.statusAppend}
-            </ThemedText>
-          </View>
-          <View style={styles.airport}>
-            <ThemedText style={styles.text}>
-              {flightStatus.airports.arrival.fsCode}
-            </ThemedText>
-            <ThemedText style={styles.textBold}>
-              {flightStatus.airports.arrival.city}
-            </ThemedText>
-          </View>
+        <View style={styles.status}>
+          <ThemedText style={styles.statusText}>
+            {flightStatus.statusAppend}
+          </ThemedText>
+        </View>
+        <View style={styles.airport}>
+          <ThemedText style={styles.text}>
+            {flightStatus.airports.arrival.fsCode}
+          </ThemedText>
+          <ThemedText style={styles.textBold}>
+            {flightStatus.airports.arrival.city}
+          </ThemedText>
         </View>
       </View>
 
@@ -73,7 +66,7 @@ export default function FlightStatus({
           <View style={commonStyles.dashLine} />
           <View style={styles.altitudeContainer}>
             <ThemedText style={styles.altitude}>
-              {currentStatus.vrate.speed > 0
+              {currentStatus.vrate.speed !== 0
                 ? currentStatus.vrate.speed + " m/s"
                 : "--"}
             </ThemedText>
@@ -169,18 +162,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "900",
   },
-  flightNumber: {
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 1.5,
-    padding: 12,
-    backgroundColor: "white",
-  },
   airports: {
     justifyContent: "space-between",
     alignItems: "center",
     flex: 2.5,
     padding: 12,
+    backgroundColor: "white",
   },
   airport: {
     justifyContent: "center",

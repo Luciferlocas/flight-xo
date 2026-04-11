@@ -67,7 +67,7 @@ export default function LoginScreen() {
       <ThemedView style={[styles.container, { height }]}>
         <View style={styles.imageContainer}>
           <Image
-            source={require("@/assets/images/airplane-flying-through-clouds.png")}
+            source={require("@/assets/images/airplane-in-cloud.png")}
             style={styles.image}
           />
         </View>
