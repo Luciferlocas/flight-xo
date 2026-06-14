@@ -1,4 +1,5 @@
-import { FlatList, StyleSheet, View, Dimensions, Text } from "react-native";
+import { FlatList, StyleSheet, View, Dimensions } from "react-native";
+import { ThemedText } from "@/components/themed-text";
 import { FlightCard } from "./card";
 import { FlightResponse } from "@/schema/search/index.types";
 import { commonStyles } from "@/constants/style";
@@ -24,8 +25,8 @@ export const FlightList = ({
       ItemSeparatorComponent={() => <View style={commonStyles.dashLine} />}
       ListEmptyComponent={
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No flights found!</Text>
-          <Text style={styles.emptySubText}>Try adjusting your search</Text>
+          <ThemedText style={styles.emptyText}>No flights found!</ThemedText>
+          <ThemedText style={styles.emptySubText}>Try adjusting your search</ThemedText>
         </View>
       }
     />

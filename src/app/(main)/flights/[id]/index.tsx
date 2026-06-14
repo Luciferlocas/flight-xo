@@ -2,7 +2,6 @@ import { FlightDetailsCard } from "@/components/flight/details";
 import { useSearch } from "@/store";
 import { useLocalSearchParams, Link } from "expo-router";
 import {
-  Text,
   View,
   StyleSheet,
   ScrollView,
@@ -45,7 +44,7 @@ export default function FlightDetails() {
   }, [flight, flights?.requestid]);
 
   if (!flight) {
-    return <Text>Flight not found</Text>;
+    return <ThemedText>Flight not found</ThemedText>;
   }
 
   return (

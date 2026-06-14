@@ -27,8 +27,8 @@ importers:
         specifier: 55.0.10-canary-20260328-2049187
         version: 55.0.10-canary-20260328-2049187(@babel/core@7.29.0)(@expo/dom-webview@55.0.4-canary-20260328-2049187)(@expo/metro-runtime@55.0.8-canary-20260328-2049187)(expo-router@55.0.9-canary-20260328-2049187)(react-dom@19.2.0(react@19.2.0))(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
       expo-application:
-        specifier: ^55.0.10
-        version: 55.0.10(expo@55.0.10-canary-20260328-2049187)
+        specifier: 55.0.11-canary-20260328-2049187
+        version: 55.0.11-canary-20260328-2049187(expo@55.0.10-canary-20260328-2049187)
       expo-constants:
         specifier: 55.0.10-canary-20260328-2049187
         version: 55.0.10-canary-20260328-2049187(expo@55.0.10-canary-20260328-2049187)(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(typescript@5.9.3)
@@ -89,6 +89,9 @@ importers:
       react-native-maps:
         specifier: ^1.27.2
         version: 1.27.2(react-native-web@0.21.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
+      react-native-mmkv:
+        specifier: ^4.3.1
+        version: 4.3.1(react-native-nitro-modules@0.35.4(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
       react-native-reanimated:
         specifier: 4.2.1
         version: 4.2.1(react-native-worklets@0.7.2(@babel/core@7.29.0)(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
@@ -2238,10 +2241,10 @@ packages:
     resolution: {integrity: sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==}
     engines: {node: '>=6'}
 
-  expo-application@55.0.10:
-    resolution: {integrity: sha512-5ccf+S6hsQz+doi907TOJxKzV5AKgAgw004z4FoDWSoGhfab0LUPg6uyvOspuU4cbNvqw8EAy08hZbVO8nKc9Q==}
+  expo-application@55.0.11-canary-20260328-2049187:
+    resolution: {integrity: sha512-XrWghJefOb3fTdxK0B3RKuz9l31nZn2SIPqn2qhYx4kOPXa/CytaUvH5wG5gHJ2ZGtonk4JPmw+a69OiDj7MfQ==}
     peerDependencies:
-      expo: '*'
+      expo: 55.0.10-canary-20260328-2049187
 
   expo-asset@55.0.11-canary-20260328-2049187:
     resolution: {integrity: sha512-HxNLQFWAs/NNh1gfHjVFH926bozPtv5vEeMiGKhh6unysaW3B85s9aoogram3Y9S8Wk3vcgrkS01/W2DQIE7Fw==}
@@ -3564,6 +3567,19 @@ packages:
     peerDependenciesMeta:
       react-native-web:
         optional: true
+
+  react-native-mmkv@4.3.1:
+    resolution: {integrity: sha512-APyGGaaHtayVgT18dBM8QGGZKr9pGfSTiBwbbPNzhGGfJQSU7awLGRGq879OqYl31HmVks9hOBLCs+qfgacRZg==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+      react-native-nitro-modules: '*'
+
+  react-native-nitro-modules@0.35.4:
+    resolution: {integrity: sha512-4qZa+1kgR/sPRNZv+UShxyArEPpovWxw76Dfd/DtCVtkQ92wOOxGIzdYvndprabd+t+r8zNYgYEPYE74gzkuVQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   react-native-reanimated@4.2.1:
     resolution: {integrity: sha512-/NcHnZMyOvsD/wYXug/YqSKw90P9edN0kEPL5lP4PFf1aQ4F1V7MKe/E0tvfkXKIajy3Qocp5EiEnlcrK/+BZg==}
@@ -6999,7 +7015,7 @@ snapshots:
 
   event-target-shim@5.0.1: {}
 
-  expo-application@55.0.10(expo@55.0.10-canary-20260328-2049187):
+  expo-application@55.0.11-canary-20260328-2049187(expo@55.0.10-canary-20260328-2049187):
     dependencies:
       expo: 55.0.10-canary-20260328-2049187(@babel/core@7.29.0)(@expo/dom-webview@55.0.4-canary-20260328-2049187)(@expo/metro-runtime@55.0.8-canary-20260328-2049187)(expo-router@55.0.9-canary-20260328-2049187)(react-dom@19.2.0(react@19.2.0))(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
 
@@ -8580,6 +8596,17 @@ snapshots:
       react-native: 0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0)
     optionalDependencies:
       react-native-web: 0.21.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+
+  react-native-mmkv@4.3.1(react-native-nitro-modules@0.35.4(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0):
+    dependencies:
+      react: 19.2.0
+      react-native: 0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0)
+      react-native-nitro-modules: 0.35.4(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
+
+  react-native-nitro-modules@0.35.4(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0):
+    dependencies:
+      react: 19.2.0
+      react-native: 0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0)
 
   react-native-reanimated@4.2.1(react-native-worklets@0.7.2(@babel/core@7.29.0)(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.4(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0):
     dependencies:

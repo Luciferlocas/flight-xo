@@ -26,6 +26,8 @@ export function ThemedText({
 
   return (
     <Text
+      allowFontScaling={false}
+      adjustsFontSizeToFit
       style={[
         { color: theme[themeColor ?? "text"] },
         type === "default" && styles.default,

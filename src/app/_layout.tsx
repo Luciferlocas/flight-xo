@@ -34,7 +34,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+        <StatusBar backgroundColor="transparent" barStyle="dark-content" animated />
         <Stack screenOptions={{ headerShown: false }}>
           {isLoggedIn ? (
             <Stack.Screen name="(main)" />

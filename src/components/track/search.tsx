@@ -9,6 +9,8 @@ import { Spinner } from "../ui/spinner";
 import { TrackModal } from "./modal";
 import { useRouter } from "expo-router";
 import { TrackService } from "@/service";
+import { storage } from "@/utils/storage";
+import RecentSearches, { RECENT_SEARCHES_KEY } from "./recent-searches";
 
 export default function SearchFlightCode() {
   const [open, setOpen] = useState(false);
@@ -30,6 +32,21 @@ export default function SearchFlightCode() {
     };
 
     try {
+      try {
+        const stored = storage.getString(RECENT_SEARCHES_KEY);
+        let recentSearches: FlightNumber[] = stored ? JSON.parse(stored) : [];
+        recentSearches = recentSearches.filter(
+          (item) => item.value._source.flightId !== localSelected.value._source.flightId
+        );
+        recentSearches.unshift(localSelected);
+        if (recentSearches.length > 5) {
+          recentSearches = recentSearches.slice(0, 5);
+        }
+        storage.set(RECENT_SEARCHES_KEY, JSON.stringify(recentSearches));
+      } catch (e) {
+        console.error("Failed to save to recent searches:", e);
+      }
+
       const res = await TrackService.trackFlight(payload);
 
       if (res.success && res.data) {
@@ -45,7 +62,7 @@ export default function SearchFlightCode() {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
           style={styles.image}
@@ -122,6 +139,8 @@ export default function SearchFlightCode() {
         </ThemedText>
       </View>
 
+      <RecentSearches onSelect={setLocalSelected} />
+
       <TrackModal
         visible={open}
         onClose={() => setOpen(false)}
@@ -132,8 +151,11 @@ export default function SearchFlightCode() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   imageContainer: {
-    height: "48%",
+    height: 300,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
